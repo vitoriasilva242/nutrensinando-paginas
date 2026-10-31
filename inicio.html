@@ -247,7 +247,7 @@ p { margin: 0 0 1em; }
 /* =========================================================
    Seções e fundos
    ========================================================= */
-.painel[hidden] { display: none; }
+[hidden] { display: none !important; }
 
 .secao {
   position: relative;
@@ -1189,10 +1189,12 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwimcLcGROb01U5CBNf_43F1xW4LimZZQtqHMT8RqKLe6tlHMCPiakk6Yw/exec";
 
 // Link da área de alunos na Hotmart (ou plataforma parecida).
-const LINK_AREA_ALUNOS = "[LINK DA ÁREA DE ALUNOS]";
+// TESTE: área de alunos geral da Hotmart. Troque pelo link de vocês.
+const LINK_AREA_ALUNOS = "https://consumer.hotmart.com/";
 
 // WhatsApp: só números, com código do país (55) e DDD. Ex.: "5521999999999"
-const WHATSAPP = "[NÚMERO DO WHATSAPP]";
+// Vazio = o WhatsApp abre e a pessoa escolhe o contato (bom para testar).
+const WHATSAPP = "";
 
 // Usuário do Instagram, sem o @
 const INSTAGRAM = "nutrensinando_";
@@ -1280,10 +1282,19 @@ const PAGINAS_GOOGLE_SITES = {
   $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
   $("#rod-insta").href = `https://instagram.com/${INSTAGRAM.replace("@", "")}`;
   $("#rod-insta-txt").textContent = "@" + INSTAGRAM.replace("@", "");
-  $("#rod-email").href = `mailto:${EMAIL}`;
-  $("#rod-email-txt").textContent = EMAIL;
+  // Contatos ainda não preenchidos ficam escondidos
+  if (preenchido(EMAIL)) {
+    $("#rod-email").href = `mailto:${EMAIL}`;
+    $("#rod-email-txt").textContent = EMAIL;
+  } else {
+    $("#rod-email").closest("li").hidden = true;
+  }
   if ($("#link-alunos")) $("#link-alunos").href = LINK_AREA_ALUNOS;
-  if ($("#lista-horarios")) $("#lista-horarios").innerHTML = HORARIOS.map((h) => `<li>${esc(h)}</li>`).join("");
+  const horarios = HORARIOS.filter(preenchido);
+  if ($("#lista-horarios")) {
+    if (horarios.length) $("#lista-horarios").innerHTML = horarios.map((h) => `<li>${esc(h)}</li>`).join("");
+    else $("#lista-horarios").closest(".horarios").hidden = true;
+  }
 
   /* ---------- Abas ---------- */
   const abas = $$('[role="tab"]');
