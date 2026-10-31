@@ -1107,13 +1107,14 @@ const PAGINAS_GOOGLE_SITES = {
   function irParaPagina(id) {
     const url = PAGINAS_GOOGLE_SITES[id];
     if (!preenchido(url)) return;
-    const janela = window.open(url, "_top");
-    if (!janela) window.open(url, "_blank", "noopener");
+    // O Google Sites não deixa o bloco trocar a página inteira; por isso abre em nova aba
+    window.open(url, "_blank", "noopener");
   }
   if (modoSites) {
     $$('a[href="politica-privacidade.html"]').forEach((a) => {
       a.href = PAGINAS_GOOGLE_SITES.privacidade;
-      a.target = "_top";
+      a.target = "_blank";
+      a.rel = "noopener";
     });
   }
 
