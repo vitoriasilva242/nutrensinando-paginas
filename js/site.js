@@ -5,8 +5,8 @@
    lê estas informações daqui.
    ========================================================= */
 
-// Endereço do Google Apps Script que recebe as inscrições dos eventos
-// e salva numa planilha. O LEIA-ME explica como criar.
+// Endereço do sistema de eventos (Google Apps Script). Cada evento tem uma página
+// própria nele: este endereço + "?evento=" + o apelido (slug) do evento.
 const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwimcLcGROb01U5CBNf_43F1xW4LimZZQtqHMT8RqKLe6tlHMCPiakk6Yw/exec";
 
 // Link da área de alunos na Hotmart (ou plataforma parecida).
@@ -30,25 +30,22 @@ const HORARIOS = [
 ];
 
 // Próximos eventos. Para adicionar, copie um bloco { ... } e troque os textos.
-// data: "AAAA-MM-DD" · formato: "Online" ou "Presencial" · vagas: texto livre (opcional)
+// data: "AAAA-MM-DD" · formato: "Online" ou "Presencial"
+// slug: o apelido do evento no sistema de eventos (o que vem depois de "?evento=")
+// link_sympla: link de compra no Sympla. Deixe "" se as inscrições ainda não abriram.
+// preco e vagas: textos opcionais (deixe "" para não mostrar)
 const EVENTOS = [
   {
-    titulo: "[NOME DO EVENTO]",
-    data: "2026-12-05",
-    horario: "[19h às 21h]",
-    formato: "Online",
-    local: "[Plataforma ou endereço]",
-    descricao: "[Uma ou duas frases sobre o que vai acontecer no evento.]",
-    vagas: "[Vagas limitadas]"
-  },
-  {
-    titulo: "[NOME DO EVENTO 2]",
-    data: "2027-01-23",
-    horario: "[9h às 12h]",
+    titulo: "Nutrição Materno-Infantil na Prática",
+    data: "2026-12-12",
+    horario: "9h às 18h",
     formato: "Presencial",
-    local: "[Endereço]",
-    descricao: "[Uma ou duas frases sobre o que vai acontecer no evento.]",
-    vagas: ""
+    local: "Centro de Convenções Barra, Barra da Tijuca",
+    descricao: "Da gestação à introdução alimentar: condutas baseadas em evidência para o consultório.",
+    preco: "R$ 197",
+    vagas: "40 vagas",
+    slug: "nutricao-materno-infantil-na-pratica",
+    link_sympla: "https://www.sympla.com.br/evento/nutricao-materno-infantil-na-pratica/3639130"
   }
 ];
 
@@ -195,12 +192,15 @@ const PAGINAS_GOOGLE_SITES = {
   window.addEventListener("hashchange", lerEndereco);
 
   /* ---------- Eventos ---------- */
+  // Cada evento leva para a compra no Sympla e para a página completa do evento
   if ($("#lista-eventos")) {
     const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-    const listaEv = $("#lista-eventos");
-    const selEv = $("#f-evento");
-    listaEv.innerHTML = EVENTOS.map((ev, i) => {
+    $("#lista-eventos").innerHTML = EVENTOS.map((ev, i) => {
       const [a, m, d] = String(ev.data).split("-").map(Number);
+      const pagina = ev.slug ? `${LINK_APPS_SCRIPT}?evento=${encodeURIComponent(ev.slug)}` : "";
+      const inscrever = preenchido(ev.link_sympla)
+        ? `<a class="botao botao--principal botao--pequeno" href="${esc(ev.link_sympla)}" target="_blank" rel="noopener">Quero me inscrever <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(ev.titulo)} (abre o Sympla em nova aba)</span></a>`
+        : `<span class="botao botao--principal botao--pequeno" aria-disabled="true">Inscrições em breve</span>`;
       return `
         <article class="evento" style="--i:${i}">
           <div class="evento__data" aria-hidden="true"><b>${String(d || "").padStart(2, "0")}</b><span>${meses[(m || 1) - 1]} ${a || ""}</span></div>
@@ -213,56 +213,14 @@ const PAGINAS_GOOGLE_SITES = {
               ${ev.vagas ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-pessoas"/></svg>${esc(ev.vagas)}</span>` : ""}
             </div>
             <p>${esc(ev.descricao)}</p>
-            <a class="botao botao--roxo botao--pequeno" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao" data-evento="${i}">Quero me inscrever</a>
+            ${ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo Sympla</p>` : ""}
+            <div class="evento__acoes">
+              ${inscrever}
+              ${pagina ? `<a class="link-evento" href="${esc(pagina)}" target="_blank" rel="noopener">Ver detalhes do evento<span class="sr-only"> (abre em nova aba)</span></a>` : ""}
+            </div>
           </div>
         </article>`;
     }).join("");
-    selEv.innerHTML = `<option value="">Escolha o evento</option>` +
-      EVENTOS.map((ev, i) => `<option value="${esc(ev.titulo)}" data-i="${i}">${esc(ev.titulo)}</option>`).join("");
-    listaEv.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-evento]");
-      if (b) selEv.selectedIndex = Number(b.dataset.evento) + 1;
-    });
-
-  }
-
-  /* ---------- Formulário de inscrição ---------- */
-  if ($("#form-inscricao")) {
-    const form = $("#form-inscricao");
-    const msg = $("#msg-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.className = "mensagem-form";
-      if (!form.checkValidity()) {
-        const primeiro = form.querySelector(":invalid");
-        msg.classList.add("erro");
-        msg.textContent = primeiro.name === "aceite"
-          ? "Para continuar, marque a caixa de concordância com a Política de Privacidade."
-          : "Confira os campos destacados: falta alguma informação.";
-        primeiro.focus();
-        return;
-      }
-      const dados = Object.fromEntries(new FormData(form));
-      dados.enviado_em = new Date().toLocaleString("pt-BR");
-      const botao = form.querySelector('button[type="submit"]');
-      botao.disabled = true;
-
-      try {
-        if (!preenchido(LINK_APPS_SCRIPT)) throw new Error("sem-link");
-        await fetch(LINK_APPS_SCRIPT, { method: "POST", mode: "no-cors", body: new URLSearchParams(dados) });
-        msg.classList.add("ok");
-        msg.textContent = `Inscrição recebida, ${dados.nome.split(" ")[0]}! Em breve a gente confirma pelo WhatsApp ou e-mail.`;
-        form.reset();
-      } catch (err) {
-        // Sem planilha configurada ou sem internet: oferece o WhatsApp com os dados prontos.
-        msg.classList.add("erro");
-        const texto = `Oi, pessoal! Quero me inscrever no evento "${dados.evento}".\nNome: ${dados.nome}\nE-mail: ${dados.email}\nWhatsApp: ${dados.whatsapp}\nPerfil: ${dados.perfil}`;
-        msg.innerHTML = `Não conseguimos enviar agora. <a href="${linkWhats(texto)}" target="_blank" rel="noopener">Envie sua inscrição pelo WhatsApp</a>, é rapidinho.`;
-      } finally {
-        botao.disabled = false;
-      }
-    });
-
   }
 
   /* ---------- Cursos ---------- */

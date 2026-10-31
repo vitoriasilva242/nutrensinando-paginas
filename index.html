@@ -78,7 +78,7 @@
       <button class="aba" role="tab" id="aba-eventos" aria-controls="eventos" aria-selected="false" tabindex="-1">Eventos</button>
       <button class="aba" role="tab" id="aba-cursos" aria-controls="cursos" aria-selected="false" tabindex="-1">Cursos</button>
     </div>
-    <a class="botao botao--principal botao--pequeno topo__cta" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever</a>
+    <a class="botao botao--principal botao--pequeno topo__cta" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever</a>
   </div>
 </header>
 
@@ -91,7 +91,7 @@
 <section class="painel" id="inicio" role="tabpanel" aria-labelledby="aba-inicio" tabindex="-1"
   data-titulo="Nutrensinando · Cursos e atualização em Nutrição"
   data-descricao="Cursos e eventos de Nutrição com base científica e prática, para estudantes e nutricionistas. Com as nutricionistas Luana e Taiane. Vamos aprender juntos?"
-  data-cta="Quero me inscrever" data-cta-aba="eventos" data-cta-alvo="inscricao">
+  data-cta="Quero me inscrever" data-cta-aba="eventos" data-cta-alvo="agenda">
 
   <!-- Abertura -->
   <div class="secao abertura fundo-creme pontilhado">
@@ -106,7 +106,7 @@
           <span class="destaque-circulo">acessível<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg></span>.</h1>
         <p class="abertura__sub" data-surgir>Cursos e eventos para estudantes e nutricionistas, com base científica e a experiência de quem vive a Nutrição todos os dias. Vamos aprender juntos?</p>
         <div class="acoes" data-surgir>
-          <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+          <a class="botao botao--principal botao--halo" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
           <a class="botao botao--contorno" href="#cursos" data-ir-aba="cursos">Ver cursos</a>
         </div>
         <p class="rolar-dica" aria-hidden="true"><span></span> Role para conhecer</p>
@@ -164,7 +164,7 @@
         </article>
       </div>
       <div class="acao-secao">
-        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+        <a class="botao botao--principal botao--halo" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -203,7 +203,7 @@
         </div>
       </div>
       <div class="acao-secao">
-        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+        <a class="botao botao--principal botao--halo" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -295,7 +295,7 @@
       </article>
 
       <div class="acao-secao">
-        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+        <a class="botao botao--principal botao--halo" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -336,8 +336,8 @@
 <!-- ABA:eventos -->
 <section class="painel" id="eventos" role="tabpanel" aria-labelledby="aba-eventos" tabindex="-1" hidden
   data-titulo="Eventos · Nutrensinando"
-  data-descricao="Aulas abertas, encontros e workshops de Nutrição com a Nutrensinando. Veja as próximas datas e faça sua inscrição."
-  data-cta="Ir para a inscrição" data-cta-aba="eventos" data-cta-alvo="inscricao">
+  data-descricao="Aulas abertas, encontros e workshops de Nutrição com a Nutrensinando. Veja as próximas datas e garanta seu ingresso pelo Sympla."
+  data-cta="Ver eventos" data-cta-aba="eventos" data-cta-alvo="agenda">
 
   <div class="cabeca-aba fundo-creme pontilhado secao" style="padding-bottom:40px">
     <div class="deco mancha mancha--verde" data-parallax="-0.1" style="width:200px;height:200px;right:-70px;top:90px" aria-hidden="true"></div>
@@ -348,7 +348,7 @@
     </div>
   </div>
 
-  <section class="secao fundo-branco" aria-labelledby="t-agenda" style="padding-top:64px">
+  <section class="secao fundo-branco" id="agenda" aria-labelledby="t-agenda" style="padding-top:64px">
     <div class="recipiente">
       <div class="cabeca">
         <span class="rotulo">Agenda</span>
@@ -360,62 +360,41 @@
     </div>
   </section>
 
-  <section class="secao fundo-noite pontilhado" id="inscricao" aria-labelledby="t-inscricao">
+  <section class="secao fundo-noite pontilhado" id="como-funciona" aria-labelledby="t-como">
     <div class="deco folha" data-parallax="-0.08" style="width:120px;right:2%;top:30px;transform:rotate(170deg);color:#a6e04c" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
-    <div class="recipiente inscricao">
-      <div>
+    <div class="recipiente">
+      <div class="cabeca">
         <span class="rotulo">Inscrição</span>
         <span class="divisor" aria-hidden="true"></span>
-        <h2 id="t-inscricao" data-palavras>Quero participar!</h2>
-        <p>Preencha seus dados e a gente confirma sua inscrição pelo WhatsApp ou e-mail. Ficou com alguma dúvida? É só chamar, conte com a gente.</p>
-        <div class="horarios">
-          <span class="destaque-ig destaque-ig--roxo" aria-hidden="true"><svg><use href="#ic-relogio"/></svg></span>
-          <div>
-            <h3 style="font-size:1.05rem;margin-bottom:6px">Horários de atendimento</h3>
-            <ul id="lista-horarios"></ul>
-          </div>
+        <h2 id="t-como" data-palavras>Como funciona a inscrição</h2>
+        <p>A compra é feita com segurança pelo Sympla. Ficou com alguma dúvida? É só chamar, conte com a gente.</p>
+      </div>
+      <div class="numerados" data-sequencia>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">01</span>
+          <h3>Escolha o evento</h3>
+          <p>Veja a data, o local e o que está incluso em "Ver detalhes do evento".</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">02</span>
+          <h3>Garanta seu ingresso</h3>
+          <p>"Quero me inscrever" leva você direto ao Sympla, onde o pagamento é finalizado.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">03</span>
+          <h3>Receba a confirmação</h3>
+          <p>O Sympla envia o ingresso por e-mail. Depois do evento, chega o certificado quando houver.</p>
+        </article>
+      </div>
+      <div class="horarios">
+        <span class="destaque-ig destaque-ig--roxo" aria-hidden="true"><svg><use href="#ic-relogio"/></svg></span>
+        <div>
+          <h3 style="font-size:1.05rem;margin-bottom:6px">Horários de atendimento</h3>
+          <ul id="lista-horarios"></ul>
         </div>
       </div>
-
-      <form class="formulario" id="form-inscricao" novalidate>
-        <div class="campo">
-          <label for="f-evento">Evento</label>
-          <select id="f-evento" name="evento" required></select>
-        </div>
-        <div class="campo">
-          <label for="f-nome">Nome completo</label>
-          <input id="f-nome" name="nome" type="text" autocomplete="name" required>
-        </div>
-        <div class="campo">
-          <label for="f-email">E-mail</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required>
-        </div>
-        <div class="campo">
-          <label for="f-whats">WhatsApp com DDD</label>
-          <input id="f-whats" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(21) 99999-9999" required>
-        </div>
-        <fieldset class="campo">
-          <legend>Você é…</legend>
-          <div class="opcoes">
-            <label class="opcao"><input type="radio" name="perfil" value="Estudante" required><span>Estudante</span></label>
-            <label class="opcao"><input type="radio" name="perfil" value="Nutricionista"><span>Nutricionista</span></label>
-            <label class="opcao"><input type="radio" name="perfil" value="Outro"><span>Outro</span></label>
-          </div>
-        </fieldset>
-        <div class="campo">
-          <label for="f-duvida">Quer deixar uma pergunta para o evento? <span style="font-weight:400">(opcional)</span></label>
-          <textarea id="f-duvida" name="duvida"></textarea>
-        </div>
-        <label class="aceite">
-          <input type="checkbox" name="aceite" value="sim" required>
-          <span>Concordo que a Nutrensinando use meus dados só para esta inscrição e para avisos sobre o evento, conforme a <a href="politica-privacidade.html">Política de Privacidade</a>.</span>
-        </label>
-        <button class="botao botao--principal botao--halo" type="submit">Quero me inscrever</button>
-        <p class="mensagem-form" id="msg-form" role="status" aria-live="polite"></p>
-      </form>
     </div>
   </section>
-</section>
 
 <!-- /ABA:eventos -->
 
@@ -476,7 +455,7 @@
 
 <!-- Botão flutuante (celular) -->
 <div class="cta-flutuante" aria-hidden="true">
-  <a class="botao botao--principal" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao" tabindex="-1">Quero me inscrever</a>
+  <a class="botao botao--principal" href="#agenda" data-ir-aba="eventos" data-alvo="agenda" tabindex="-1">Quero me inscrever</a>
 </div>
 
 <!-- ============ RODAPÉ ============ -->

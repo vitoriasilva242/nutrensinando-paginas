@@ -492,6 +492,8 @@ p { margin: 0 0 1em; }
 .cartao-num:nth-child(2) .cartao-num__numero { -webkit-text-stroke-color: var(--roxo); }
 .cartao-num:nth-child(3) .cartao-num__numero { -webkit-text-stroke-color: var(--verde); }
 .cartao-num h3 { margin-bottom: 10px; }
+.fundo-noite .cartao-num h3 { color: var(--roxo); }
+.fundo-noite .cartao-num { color: var(--tinta); }
 .cartao-num p { color: var(--tinta-suave); margin: 0; }
 .cartao-num .rotulo { font-size: .7rem; }
 
@@ -616,7 +618,13 @@ p { margin: 0 0 1em; }
 .evento__meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .88rem; color: var(--tinta-suave); margin-bottom: 10px; }
 .evento__meta span { display: inline-flex; align-items: center; gap: 6px; }
 .evento p { font-size: .96rem; color: var(--tinta-suave); }
-.evento .botao { margin-top: 4px; }
+.evento__preco { font-size: .9rem; color: var(--tinta-suave); }
+.evento__preco b { color: var(--tinta); }
+.evento__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 4px; }
+.link-evento {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--roxo); font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+}
 
 .inscricao { display: grid; gap: 36px; }
 @media (min-width: 900px) { .inscricao { grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; } }
@@ -843,13 +851,13 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
       <p>A Nutrensinando ([NOME EMPRESARIAL OU NOME DAS RESPONSÁVEIS], [CNPJ OU CPF]) respeita a sua privacidade. Esta página explica, de forma simples, quais dados coletamos e o que fazemos com eles, conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).</p>
 
       <h2>Quais dados coletamos</h2>
-      <p>Só os que você preenche no formulário de inscrição de eventos: nome, e-mail, WhatsApp, se você é estudante ou nutricionista e, se quiser, uma pergunta para o evento.</p>
+      <p>Este site não tem formulários. As inscrições nos eventos são feitas no <strong>Sympla</strong>, e as compras de cursos na <strong>Hotmart</strong>. Os dados que você informa lá (nome, e-mail, CPF, pagamento) são recebidos por essas plataformas, que têm suas próprias políticas de privacidade, e compartilhados conosco só no necessário para organizar o evento ou o curso.</p>
 
       <h2>Para que usamos</h2>
-      <p>Para confirmar sua inscrição, enviar informações sobre o evento (link, horário, materiais) e responder à sua pergunta. Não vendemos nem compartilhamos seus dados com terceiros para fins de propaganda.</p>
+      <p>Para confirmar sua inscrição, enviar informações sobre o evento (horário, local, materiais e certificado) e responder às suas dúvidas. Não vendemos nem compartilhamos seus dados com terceiros para fins de propaganda.</p>
 
       <h2>Onde ficam guardados</h2>
-      <p>Numa planilha privada do Google, acessada apenas pela equipe da Nutrensinando. Guardamos os dados enquanto forem necessários para o evento ou até você pedir a exclusão.</p>
+      <p>Os dados dos inscritos ficam numa planilha privada do Google, acessada apenas pela equipe da Nutrensinando. Guardamos os dados enquanto forem necessários para o evento ou até você pedir a exclusão.</p>
 
       <h2>Cookies</h2>
       <p>Este site não usa cookies de rastreamento nem ferramentas de publicidade. As fontes do texto são carregadas do Google Fonts. As compras dos cursos acontecem na plataforma do curso (por exemplo, a Hotmart), que tem a sua própria política de privacidade.</p>

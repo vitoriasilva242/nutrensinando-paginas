@@ -481,6 +481,8 @@ p { margin: 0 0 1em; }
 .cartao-num:nth-child(2) .cartao-num__numero { -webkit-text-stroke-color: var(--roxo); }
 .cartao-num:nth-child(3) .cartao-num__numero { -webkit-text-stroke-color: var(--verde); }
 .cartao-num h3 { margin-bottom: 10px; }
+.fundo-noite .cartao-num h3 { color: var(--roxo); }
+.fundo-noite .cartao-num { color: var(--tinta); }
 .cartao-num p { color: var(--tinta-suave); margin: 0; }
 .cartao-num .rotulo { font-size: .7rem; }
 
@@ -605,7 +607,13 @@ p { margin: 0 0 1em; }
 .evento__meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .88rem; color: var(--tinta-suave); margin-bottom: 10px; }
 .evento__meta span { display: inline-flex; align-items: center; gap: 6px; }
 .evento p { font-size: .96rem; color: var(--tinta-suave); }
-.evento .botao { margin-top: 4px; }
+.evento__preco { font-size: .9rem; color: var(--tinta-suave); }
+.evento__preco b { color: var(--tinta); }
+.evento__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 4px; }
+.link-evento {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--roxo); font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+}
 
 .inscricao { display: grid; gap: 36px; }
 @media (min-width: 900px) { .inscricao { grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; } }

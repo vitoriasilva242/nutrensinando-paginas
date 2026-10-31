@@ -493,6 +493,8 @@ p { margin: 0 0 1em; }
 .cartao-num:nth-child(2) .cartao-num__numero { -webkit-text-stroke-color: var(--roxo); }
 .cartao-num:nth-child(3) .cartao-num__numero { -webkit-text-stroke-color: var(--verde); }
 .cartao-num h3 { margin-bottom: 10px; }
+.fundo-noite .cartao-num h3 { color: var(--roxo); }
+.fundo-noite .cartao-num { color: var(--tinta); }
 .cartao-num p { color: var(--tinta-suave); margin: 0; }
 .cartao-num .rotulo { font-size: .7rem; }
 
@@ -617,7 +619,13 @@ p { margin: 0 0 1em; }
 .evento__meta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .88rem; color: var(--tinta-suave); margin-bottom: 10px; }
 .evento__meta span { display: inline-flex; align-items: center; gap: 6px; }
 .evento p { font-size: .96rem; color: var(--tinta-suave); }
-.evento .botao { margin-top: 4px; }
+.evento__preco { font-size: .9rem; color: var(--tinta-suave); }
+.evento__preco b { color: var(--tinta); }
+.evento__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 4px; }
+.link-evento {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--roxo); font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+}
 
 .inscricao { display: grid; gap: 36px; }
 @media (min-width: 900px) { .inscricao { grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: start; } }
@@ -873,7 +881,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
       <button class="aba" role="tab" id="aba-eventos" aria-controls="eventos" aria-selected="false" tabindex="-1">Eventos</button>
       <button class="aba" role="tab" id="aba-cursos" aria-controls="cursos" aria-selected="false" tabindex="-1">Cursos</button>
     </div>
-    <a class="botao botao--principal botao--pequeno topo__cta" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever</a>
+    <a class="botao botao--principal botao--pequeno topo__cta" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever</a>
   </div>
 </header>
 
@@ -890,8 +898,8 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 <!-- ABA:eventos -->
 <section class="painel" id="eventos" role="tabpanel" aria-labelledby="aba-eventos" tabindex="-1"
   data-titulo="Eventos · Nutrensinando"
-  data-descricao="Aulas abertas, encontros e workshops de Nutrição com a Nutrensinando. Veja as próximas datas e faça sua inscrição."
-  data-cta="Ir para a inscrição" data-cta-aba="eventos" data-cta-alvo="inscricao">
+  data-descricao="Aulas abertas, encontros e workshops de Nutrição com a Nutrensinando. Veja as próximas datas e garanta seu ingresso pelo Sympla."
+  data-cta="Ver eventos" data-cta-aba="eventos" data-cta-alvo="agenda">
 
   <div class="cabeca-aba fundo-creme pontilhado secao" style="padding-bottom:40px">
     <div class="deco mancha mancha--verde" data-parallax="-0.1" style="width:200px;height:200px;right:-70px;top:90px" aria-hidden="true"></div>
@@ -902,7 +910,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
     </div>
   </div>
 
-  <section class="secao fundo-branco" aria-labelledby="t-agenda" style="padding-top:64px">
+  <section class="secao fundo-branco" id="agenda" aria-labelledby="t-agenda" style="padding-top:64px">
     <div class="recipiente">
       <div class="cabeca">
         <span class="rotulo">Agenda</span>
@@ -914,62 +922,41 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
     </div>
   </section>
 
-  <section class="secao fundo-noite pontilhado" id="inscricao" aria-labelledby="t-inscricao">
+  <section class="secao fundo-noite pontilhado" id="como-funciona" aria-labelledby="t-como">
     <div class="deco folha" data-parallax="-0.08" style="width:120px;right:2%;top:30px;transform:rotate(170deg);color:#a6e04c" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
-    <div class="recipiente inscricao">
-      <div>
+    <div class="recipiente">
+      <div class="cabeca">
         <span class="rotulo">Inscrição</span>
         <span class="divisor" aria-hidden="true"></span>
-        <h2 id="t-inscricao" data-palavras>Quero participar!</h2>
-        <p>Preencha seus dados e a gente confirma sua inscrição pelo WhatsApp ou e-mail. Ficou com alguma dúvida? É só chamar, conte com a gente.</p>
-        <div class="horarios">
-          <span class="destaque-ig destaque-ig--roxo" aria-hidden="true"><svg><use href="#ic-relogio"/></svg></span>
-          <div>
-            <h3 style="font-size:1.05rem;margin-bottom:6px">Horários de atendimento</h3>
-            <ul id="lista-horarios"></ul>
-          </div>
+        <h2 id="t-como" data-palavras>Como funciona a inscrição</h2>
+        <p>A compra é feita com segurança pelo Sympla. Ficou com alguma dúvida? É só chamar, conte com a gente.</p>
+      </div>
+      <div class="numerados" data-sequencia>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">01</span>
+          <h3>Escolha o evento</h3>
+          <p>Veja a data, o local e o que está incluso em "Ver detalhes do evento".</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">02</span>
+          <h3>Garanta seu ingresso</h3>
+          <p>"Quero me inscrever" leva você direto ao Sympla, onde o pagamento é finalizado.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">03</span>
+          <h3>Receba a confirmação</h3>
+          <p>O Sympla envia o ingresso por e-mail. Depois do evento, chega o certificado quando houver.</p>
+        </article>
+      </div>
+      <div class="horarios">
+        <span class="destaque-ig destaque-ig--roxo" aria-hidden="true"><svg><use href="#ic-relogio"/></svg></span>
+        <div>
+          <h3 style="font-size:1.05rem;margin-bottom:6px">Horários de atendimento</h3>
+          <ul id="lista-horarios"></ul>
         </div>
       </div>
-
-      <form class="formulario" id="form-inscricao" novalidate>
-        <div class="campo">
-          <label for="f-evento">Evento</label>
-          <select id="f-evento" name="evento" required></select>
-        </div>
-        <div class="campo">
-          <label for="f-nome">Nome completo</label>
-          <input id="f-nome" name="nome" type="text" autocomplete="name" required>
-        </div>
-        <div class="campo">
-          <label for="f-email">E-mail</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required>
-        </div>
-        <div class="campo">
-          <label for="f-whats">WhatsApp com DDD</label>
-          <input id="f-whats" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(21) 99999-9999" required>
-        </div>
-        <fieldset class="campo">
-          <legend>Você é…</legend>
-          <div class="opcoes">
-            <label class="opcao"><input type="radio" name="perfil" value="Estudante" required><span>Estudante</span></label>
-            <label class="opcao"><input type="radio" name="perfil" value="Nutricionista"><span>Nutricionista</span></label>
-            <label class="opcao"><input type="radio" name="perfil" value="Outro"><span>Outro</span></label>
-          </div>
-        </fieldset>
-        <div class="campo">
-          <label for="f-duvida">Quer deixar uma pergunta para o evento? <span style="font-weight:400">(opcional)</span></label>
-          <textarea id="f-duvida" name="duvida"></textarea>
-        </div>
-        <label class="aceite">
-          <input type="checkbox" name="aceite" value="sim" required>
-          <span>Concordo que a Nutrensinando use meus dados só para esta inscrição e para avisos sobre o evento, conforme a <a href="politica-privacidade.html">Política de Privacidade</a>.</span>
-        </label>
-        <button class="botao botao--principal botao--halo" type="submit">Quero me inscrever</button>
-        <p class="mensagem-form" id="msg-form" role="status" aria-live="polite"></p>
-      </form>
     </div>
   </section>
-</section>
 
 <!-- /ABA:eventos -->
 
@@ -981,7 +968,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 
 <!-- Botão flutuante (celular) -->
 <div class="cta-flutuante" aria-hidden="true">
-  <a class="botao botao--principal" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao" tabindex="-1">Quero me inscrever</a>
+  <a class="botao botao--principal" href="#agenda" data-ir-aba="eventos" data-alvo="agenda" tabindex="-1">Quero me inscrever</a>
 </div>
 
 <!-- ============ RODAPÉ ============ -->
@@ -1027,8 +1014,8 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
    lê estas informações daqui.
    ========================================================= */
 
-// Endereço do Google Apps Script que recebe as inscrições dos eventos
-// e salva numa planilha. O LEIA-ME explica como criar.
+// Endereço do sistema de eventos (Google Apps Script). Cada evento tem uma página
+// própria nele: este endereço + "?evento=" + o apelido (slug) do evento.
 const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwimcLcGROb01U5CBNf_43F1xW4LimZZQtqHMT8RqKLe6tlHMCPiakk6Yw/exec";
 
 // Link da área de alunos na Hotmart (ou plataforma parecida).
@@ -1052,25 +1039,22 @@ const HORARIOS = [
 ];
 
 // Próximos eventos. Para adicionar, copie um bloco { ... } e troque os textos.
-// data: "AAAA-MM-DD" · formato: "Online" ou "Presencial" · vagas: texto livre (opcional)
+// data: "AAAA-MM-DD" · formato: "Online" ou "Presencial"
+// slug: o apelido do evento no sistema de eventos (o que vem depois de "?evento=")
+// link_sympla: link de compra no Sympla. Deixe "" se as inscrições ainda não abriram.
+// preco e vagas: textos opcionais (deixe "" para não mostrar)
 const EVENTOS = [
   {
-    titulo: "[NOME DO EVENTO]",
-    data: "2026-12-05",
-    horario: "[19h às 21h]",
-    formato: "Online",
-    local: "[Plataforma ou endereço]",
-    descricao: "[Uma ou duas frases sobre o que vai acontecer no evento.]",
-    vagas: "[Vagas limitadas]"
-  },
-  {
-    titulo: "[NOME DO EVENTO 2]",
-    data: "2027-01-23",
-    horario: "[9h às 12h]",
+    titulo: "Nutrição Materno-Infantil na Prática",
+    data: "2026-12-12",
+    horario: "9h às 18h",
     formato: "Presencial",
-    local: "[Endereço]",
-    descricao: "[Uma ou duas frases sobre o que vai acontecer no evento.]",
-    vagas: ""
+    local: "Centro de Convenções Barra, Barra da Tijuca",
+    descricao: "Da gestação à introdução alimentar: condutas baseadas em evidência para o consultório.",
+    preco: "R$ 197",
+    vagas: "40 vagas",
+    slug: "nutricao-materno-infantil-na-pratica",
+    link_sympla: "https://www.sympla.com.br/evento/nutricao-materno-infantil-na-pratica/3639130"
   }
 ];
 
@@ -1217,12 +1201,15 @@ const PAGINAS_GOOGLE_SITES = {
   window.addEventListener("hashchange", lerEndereco);
 
   /* ---------- Eventos ---------- */
+  // Cada evento leva para a compra no Sympla e para a página completa do evento
   if ($("#lista-eventos")) {
     const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-    const listaEv = $("#lista-eventos");
-    const selEv = $("#f-evento");
-    listaEv.innerHTML = EVENTOS.map((ev, i) => {
+    $("#lista-eventos").innerHTML = EVENTOS.map((ev, i) => {
       const [a, m, d] = String(ev.data).split("-").map(Number);
+      const pagina = ev.slug ? `${LINK_APPS_SCRIPT}?evento=${encodeURIComponent(ev.slug)}` : "";
+      const inscrever = preenchido(ev.link_sympla)
+        ? `<a class="botao botao--principal botao--pequeno" href="${esc(ev.link_sympla)}" target="_blank" rel="noopener">Quero me inscrever <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(ev.titulo)} (abre o Sympla em nova aba)</span></a>`
+        : `<span class="botao botao--principal botao--pequeno" aria-disabled="true">Inscrições em breve</span>`;
       return `
         <article class="evento" style="--i:${i}">
           <div class="evento__data" aria-hidden="true"><b>${String(d || "").padStart(2, "0")}</b><span>${meses[(m || 1) - 1]} ${a || ""}</span></div>
@@ -1235,56 +1222,14 @@ const PAGINAS_GOOGLE_SITES = {
               ${ev.vagas ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-pessoas"/></svg>${esc(ev.vagas)}</span>` : ""}
             </div>
             <p>${esc(ev.descricao)}</p>
-            <a class="botao botao--roxo botao--pequeno" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao" data-evento="${i}">Quero me inscrever</a>
+            ${ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo Sympla</p>` : ""}
+            <div class="evento__acoes">
+              ${inscrever}
+              ${pagina ? `<a class="link-evento" href="${esc(pagina)}" target="_blank" rel="noopener">Ver detalhes do evento<span class="sr-only"> (abre em nova aba)</span></a>` : ""}
+            </div>
           </div>
         </article>`;
     }).join("");
-    selEv.innerHTML = `<option value="">Escolha o evento</option>` +
-      EVENTOS.map((ev, i) => `<option value="${esc(ev.titulo)}" data-i="${i}">${esc(ev.titulo)}</option>`).join("");
-    listaEv.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-evento]");
-      if (b) selEv.selectedIndex = Number(b.dataset.evento) + 1;
-    });
-
-  }
-
-  /* ---------- Formulário de inscrição ---------- */
-  if ($("#form-inscricao")) {
-    const form = $("#form-inscricao");
-    const msg = $("#msg-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.className = "mensagem-form";
-      if (!form.checkValidity()) {
-        const primeiro = form.querySelector(":invalid");
-        msg.classList.add("erro");
-        msg.textContent = primeiro.name === "aceite"
-          ? "Para continuar, marque a caixa de concordância com a Política de Privacidade."
-          : "Confira os campos destacados: falta alguma informação.";
-        primeiro.focus();
-        return;
-      }
-      const dados = Object.fromEntries(new FormData(form));
-      dados.enviado_em = new Date().toLocaleString("pt-BR");
-      const botao = form.querySelector('button[type="submit"]');
-      botao.disabled = true;
-
-      try {
-        if (!preenchido(LINK_APPS_SCRIPT)) throw new Error("sem-link");
-        await fetch(LINK_APPS_SCRIPT, { method: "POST", mode: "no-cors", body: new URLSearchParams(dados) });
-        msg.classList.add("ok");
-        msg.textContent = `Inscrição recebida, ${dados.nome.split(" ")[0]}! Em breve a gente confirma pelo WhatsApp ou e-mail.`;
-        form.reset();
-      } catch (err) {
-        // Sem planilha configurada ou sem internet: oferece o WhatsApp com os dados prontos.
-        msg.classList.add("erro");
-        const texto = `Oi, pessoal! Quero me inscrever no evento "${dados.evento}".\nNome: ${dados.nome}\nE-mail: ${dados.email}\nWhatsApp: ${dados.whatsapp}\nPerfil: ${dados.perfil}`;
-        msg.innerHTML = `Não conseguimos enviar agora. <a href="${linkWhats(texto)}" target="_blank" rel="noopener">Envie sua inscrição pelo WhatsApp</a>, é rapidinho.`;
-      } finally {
-        botao.disabled = false;
-      }
-    });
-
   }
 
   /* ---------- Cursos ---------- */
