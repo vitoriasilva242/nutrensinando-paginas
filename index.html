@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Nutrensinando · Cursos e atualização em Nutrição</title>
+  <meta name="description" content="Cursos e eventos de Nutrição com base científica e prática, para estudantes e nutricionistas. Com as nutricionistas Luana e Taiane. Vamos aprender juntos?">
+  <meta name="theme-color" content="#5e226f">
+
+  <!-- Open Graph: deixa o link bonito no WhatsApp e no Instagram.
+       Depois de publicar, troque https://vitoriasilva242.github.io/nutrensinando-paginas pelo endereço final (ex.: https://nutrensinando.com.br). -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Nutrensinando">
+  <meta property="og:title" content="Nutrensinando · Cursos e atualização em Nutrição">
+  <meta property="og:description" content="Ciência, prática e troca de verdade. Cursos e eventos para estudantes e nutricionistas.">
+  <meta property="og:url" content="https://vitoriasilva242.github.io/nutrensinando-paginas/">
+  <meta property="og:image" content="https://vitoriasilva242.github.io/nutrensinando-paginas/img/og-nutrensinando.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo da Nutrensinando: um livro aberto com frutas, nas cores roxo, verde e laranja.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilo.css">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<!-- Desenhos reutilizáveis (folhas, ícones) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="folhas" viewBox="0 0 200 260">
+      <g fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <path d="M100 258 C96 190 92 120 70 20" fill="none"/>
+        <path d="M95 200 C70 196 48 178 40 150 C66 150 88 168 95 200Z" fill-opacity=".35"/>
+        <path d="M97 170 C122 166 142 146 150 118 C124 120 102 140 97 170Z" fill-opacity=".3"/>
+        <path d="M88 130 C64 124 46 104 42 76 C66 80 84 100 88 130Z" fill-opacity=".35"/>
+        <path d="M86 98 C108 90 124 70 128 42 C104 48 88 70 86 98Z" fill-opacity=".28"/>
+        <path d="M76 56 C60 46 52 28 54 8 C70 18 78 36 76 56Z" fill-opacity=".35"/>
+      </g>
+    </symbol>
+    <symbol id="ic-relogio" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+    <symbol id="ic-local" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></g></symbol>
+    <symbol id="ic-certificado" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M9 13.5 8 21l4-2 4 2-1-7.5"/></g></symbol>
+    <symbol id="ic-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></g></symbol>
+    <symbol id="ic-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></g></symbol>
+    <symbol id="ic-calendario" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></g></symbol>
+    <symbol id="ic-livro" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5c3-1.5 7-1.5 10 1 3-2.5 7-2.5 10-1v14c-3-1.5-7-1.5-10 1-3-2.5-7-2.5-10-1z"/><path d="M12 6v14"/></g></symbol>
+    <symbol id="ic-whats" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.2-.2-.4-.3z"/></symbol>
+    <symbol id="ic-insta" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></g></symbol>
+    <symbol id="ic-email" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></g></symbol>
+    <symbol id="ic-telefone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.2 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.3 1z"/></symbol>
+    <symbol id="ic-pessoas" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2a5 5 0 0 1 5.5 4.8"/></g></symbol>
+  </defs>
+</svg>
+
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+<div class="progresso" aria-hidden="true"></div>
+
+<!-- ============ MENU DO TOPO ============ -->
+<header class="topo">
+  <div class="recipiente topo__linha">
+    <a class="logo" href="#inicio" data-ir-aba="inicio" aria-label="Nutrensinando, voltar ao início">
+      <img src="img/simbolo.webp" alt="" width="208" height="242">
+      <span>
+        <span class="marca"><span class="nutr">Nutr</span><span class="ensinando">ensinando</span></span>
+        <small>CURSOS E ATUALIZAÇÃO EM NUTRIÇÃO</small>
+      </span>
+    </a>
+    <div class="abas" role="tablist" aria-label="Seções do site">
+      <button class="aba" role="tab" id="aba-inicio" aria-controls="inicio" aria-selected="true">Início</button>
+      <button class="aba" role="tab" id="aba-eventos" aria-controls="eventos" aria-selected="false" tabindex="-1">Eventos</button>
+      <button class="aba" role="tab" id="aba-cursos" aria-controls="cursos" aria-selected="false" tabindex="-1">Cursos</button>
+    </div>
+    <a class="botao botao--principal botao--pequeno topo__cta" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever</a>
+  </div>
+</header>
+
+<main id="conteudo">
+
+<!-- =====================================================
+     ABA 1 · INÍCIO
+     ===================================================== -->
+<!-- ABA:inicio -->
+<section class="painel" id="inicio" role="tabpanel" aria-labelledby="aba-inicio" tabindex="-1"
+  data-titulo="Nutrensinando · Cursos e atualização em Nutrição"
+  data-descricao="Cursos e eventos de Nutrição com base científica e prática, para estudantes e nutricionistas. Com as nutricionistas Luana e Taiane. Vamos aprender juntos?"
+  data-cta="Quero me inscrever" data-cta-aba="eventos" data-cta-alvo="inscricao">
+
+  <!-- Abertura -->
+  <div class="secao abertura fundo-creme pontilhado">
+    <div class="deco mancha mancha--verde" data-parallax="-0.12" style="width:240px;height:240px;right:-90px;top:70px" aria-hidden="true"></div>
+    <div class="deco mancha mancha--laranja" data-parallax="0.08" style="width:140px;height:140px;left:-60px;bottom:40px;opacity:.75" aria-hidden="true"></div>
+    <div class="deco folha" data-parallax="-0.06" style="width:120px;left:-20px;top:18%;transform:rotate(-18deg)" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+
+    <div class="recipiente abertura__grade">
+      <div>
+        <p class="selo" data-surgir>Ciência <span class="ponto" aria-hidden="true"></span> Prática <span class="ponto" aria-hidden="true"></span> Troca de verdade</p>
+        <h1 data-palavras>Estudar Nutrição pode ser leve, prático e
+          <span class="destaque-circulo">acessível<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg></span>.</h1>
+        <p class="abertura__sub" data-surgir>Cursos e eventos para estudantes e nutricionistas, com base científica e a experiência de quem vive a Nutrição todos os dias. Vamos aprender juntos?</p>
+        <div class="acoes" data-surgir>
+          <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+          <a class="botao botao--contorno" href="#cursos" data-ir-aba="cursos">Ver cursos</a>
+        </div>
+        <p class="rolar-dica" aria-hidden="true"><span></span> Role para conhecer</p>
+      </div>
+
+      <div class="abertura__fotos" data-surgir>
+        <figure class="f1"><img src="img/luana.webp" alt="Luana, nutricionista e cofundadora da Nutrensinando, sorrindo." width="490" height="612" fetchpriority="high"></figure>
+        <figure class="f2"><img src="img/taiane.webp" alt="Taiane, nutricionista e cofundadora da Nutrensinando, de jaleco branco, sorrindo." width="580" height="725"></figure>
+        <div class="simbolo"><img src="img/simbolo.webp" alt="" width="208" height="242"></div>
+        <span class="etiqueta etiqueta--1">Luana <i>·</i> Doutora em Ciência de Alimentos</span>
+        <span class="etiqueta etiqueta--2">Taiane <i>·</i> Gestão e qualidade</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faixas cruzadas -->
+  <div class="faixas" aria-hidden="true">
+    <div class="faixa faixa--verde"><div class="faixa__trilho">
+      <span>Vamos aprender juntos?</span><span>Ciência e prática</span><span>Conte com a gente</span><span>Tire suas dúvidas</span><span>Vamos crescer juntos</span>
+      <span>Vamos aprender juntos?</span><span>Ciência e prática</span><span>Conte com a gente</span><span>Tire suas dúvidas</span><span>Vamos crescer juntos</span>
+    </div></div>
+    <div class="faixa faixa--roxa"><div class="faixa__trilho">
+      <span>Ciência e prática</span><span>Tire suas dúvidas</span><span>Vamos aprender juntos?</span><span>Conte com a gente</span><span>Nutrição acessível</span>
+      <span>Ciência e prática</span><span>Tire suas dúvidas</span><span>Vamos aprender juntos?</span><span>Conte com a gente</span><span>Nutrição acessível</span>
+    </div></div>
+  </div>
+
+  <!-- 1. Quem a gente quer ajudar -->
+  <section class="secao fundo-branco" aria-labelledby="t-para-quem">
+    <div class="deco folha" data-parallax="0.08" style="width:110px;right:-10px;top:40px;transform:rotate(160deg)" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">01 · Para quem é</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-para-quem" data-palavras>Você está no lugar certo se…</h2>
+      </div>
+      <div class="numerados" data-sequencia>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">01</span>
+          <span class="rotulo">01 · Para você que estuda</span>
+          <h3>Está na graduação</h3>
+          <p>E quer ligar a teoria da sala de aula ao que acontece no consultório, na clínica e na produção de refeições.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">02</span>
+          <span class="rotulo">02 · Para você que se formou</span>
+          <h3>Acabou de se formar</h3>
+          <p>E sente aquela insegurança dos primeiros atendimentos. Aqui você pergunta sem medo e aprende com quem já passou por isso.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">03</span>
+          <span class="rotulo">03 · Para você que atua</span>
+          <h3>Já atua na área</h3>
+          <p>E quer se atualizar com conteúdo baseado em evidências, explicado de forma clara e direto ao ponto.</p>
+        </article>
+      </div>
+      <div class="acao-secao">
+        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. O que costuma faltar na formação (manifesto que acende) -->
+  <section class="secao fundo-noite pontilhado" aria-labelledby="t-falta">
+    <div class="deco mancha mancha--roxa" data-parallax="-0.1" style="width:320px;height:320px;left:-140px;top:20%" aria-hidden="true"></div>
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">02 · O que costuma faltar</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-falta" class="sr-only">O que costuma faltar na formação</h2>
+      </div>
+      <p class="acende" data-acende>A faculdade ensina muita coisa. Mas, quando chega a hora de atender, montar um cardápio ou gerir uma equipe, muita gente se sente sozinha. Falta prática, falta atualização e falta alguém para tirar dúvidas sem julgamento. <strong>A Nutrensinando nasceu para preencher esse espaço</strong>, com <span class="verde">ensino de qualidade e acessível para todos.</span></p>
+
+      <div style="margin-top:64px">
+        <h2 data-palavras style="font-size:clamp(1.5rem,4.4vw,2.4rem)">Sem atualização × Com a Nutrensinando</h2>
+        <div class="comparar" data-sequencia>
+          <div class="comparar__col comparar__sem">
+            <h3>Sem atualização</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-x"/></svg><span><strong>Estudo solto, aos pedaços.</strong><small>Um vídeo aqui, um post ali, sem saber o que tem base científica.</small></span></li>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-x"/></svg><span><strong>Dúvidas que ficam sem resposta.</strong><small>Vergonha de perguntar ou ninguém por perto para ajudar.</small></span></li>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-x"/></svg><span><strong>Teoria longe da rotina.</strong><small>Difícil enxergar como aplicar o conteúdo no dia a dia.</small></span></li>
+            </ul>
+          </div>
+          <span class="comparar__vs" aria-hidden="true">×</span>
+          <div class="comparar__col comparar__com">
+            <h3>Com a Nutrensinando</h3>
+            <ul>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-check"/></svg><span><strong>Conteúdo organizado e com fontes.</strong><small>Informação baseada em evidências, explicada de forma simples.</small></span></li>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-check"/></svg><span><strong>Espaço para perguntar.</strong><small>Troca de verdade com as professoras e com outros colegas.</small></span></li>
+              <li><svg class="ic" aria-hidden="true"><use href="#ic-check"/></svg><span><strong>Exemplos da prática.</strong><small>Casos e situações reais de quem atua na área.</small></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="acao-secao">
+        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Frase de efeito -->
+  <section class="secao fundo-creme" aria-label="Nossa missão">
+    <div class="deco folha" data-parallax="-0.08" style="width:120px;left:4%;top:20px;transform:rotate(-30deg)" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+    <div class="deco folha" data-parallax="0.1" style="width:110px;right:3%;bottom:10px;transform:rotate(150deg)" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+    <div class="recipiente">
+      <p class="frase-efeito" data-palavras>A Nutrensinando existe para que estudar Nutrição seja <em>acessível para todos.</em></p>
+    </div>
+  </section>
+
+  <!-- 3. Como a Nutrensinando resolve isso -->
+  <section class="secao fundo-branco pontilhado" aria-labelledby="t-porque">
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">03 · Por que aprender com a gente</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-porque" data-palavras>Ciência, prática e troca de verdade</h2>
+        <p>Do jeito que a gente gostaria de ter aprendido.</p>
+      </div>
+      <div class="numerados" data-sequencia>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">01</span>
+          <span class="rotulo">01 · Ciência</span>
+          <h3>Base em evidências</h3>
+          <p>Conteúdo fundamentado e com fontes confiáveis. Termo técnico vem sempre acompanhado de uma explicação simples.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">02</span>
+          <span class="rotulo">02 · Prática</span>
+          <h3>Do livro para a rotina</h3>
+          <p>Exemplos de quem atua em clínica, docência e gestão de serviços de alimentação. Você entende o porquê e o como.</p>
+        </article>
+        <article class="cartao-num">
+          <span class="cartao-num__numero" aria-hidden="true">03</span>
+          <span class="rotulo">03 · Troca</span>
+          <h3>Comunidade acolhedora</h3>
+          <p>Aqui pergunta boba não existe. Estudantes e nutricionistas aprendendo juntos. Conte com a gente!</p>
+        </article>
+      </div>
+      <div class="acao-secao">
+        <a class="botao botao--principal botao--halo" href="#cursos" data-ir-aba="cursos">Ver cursos <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Quem são as professoras -->
+  <section class="secao fundo-laranja" id="professoras" aria-labelledby="t-profs">
+    <div class="deco mancha mancha--verde" data-parallax="-0.1" style="width:200px;height:200px;right:-80px;top:30%;opacity:.5" aria-hidden="true"></div>
+    <div class="recipiente">
+      <div class="cabeca cabeca--centro">
+        <span class="rotulo">04 · Quem somos</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-profs" data-palavras>Unimos nossos conhecimentos em prol de um <span class="destaque-circulo">sonho<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg></span></h2>
+        <p>A Nutrensinando está além de uma marca: somos humanas e acreditamos em um mundo melhor por meio do ensino de qualidade e acessível.</p>
+      </div>
+
+      <article class="alternado" data-surgir>
+        <div class="alternado__img"><img src="img/luana.webp" alt="Retrato da nutricionista Luana, sorrindo, com blusa florida." width="490" height="612" loading="lazy"></div>
+        <div>
+          <span class="num-pequeno">0.1</span>
+          <h3>Olá, eu sou a Luana</h3>
+          <ul class="lista-check">
+            <li>Nutricionista, Mestre em Ciências</li>
+            <li>Doutora em Ciência e Tecnologia de Alimentos</li>
+            <li>Presidente do 4º Conselho Regional de Nutrição</li>
+            <li>Coordenadora e professora do curso de Nutrição</li>
+            <li>Mãe e idealizadora da Nutrensinando</li>
+          </ul>
+          <p class="citacao">[FRASE CURTA DA LUANA SOBRE POR QUE ENSINA]</p>
+        </div>
+      </article>
+
+      <article class="alternado" data-surgir>
+        <div class="alternado__img"><img src="img/taiane.webp" alt="Retrato da nutricionista Taiane, de jaleco branco, com a mão no queixo." width="580" height="725" loading="lazy"></div>
+        <div>
+          <span class="num-pequeno">0.2</span>
+          <h3>Olá, eu sou a Taiane</h3>
+          <ul class="lista-check">
+            <li>Nutricionista, pós-graduada em Nutrição Vegetariana e Vegana</li>
+            <li>Experiência em Gestão Operacional e Gestão da Qualidade</li>
+            <li>Atuou como coordenadora de Nutrição, gerenciando 6 unidades de restaurantes</li>
+            <li>Mãe e idealizadora da Nutrensinando</li>
+          </ul>
+          <p class="citacao">[FRASE CURTA DA TAIANE SOBRE POR QUE ENSINA]</p>
+        </div>
+      </article>
+
+      <div class="acao-secao">
+        <a class="botao botao--principal botao--halo" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao">Quero me inscrever <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. O que oferecemos -->
+  <section class="secao fundo-creme pontilhado" aria-labelledby="t-ofertas">
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">05 · O que oferecemos</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-ofertas" data-palavras>Escolha como quer aprender</h2>
+      </div>
+      <div class="ofertas" data-sequencia>
+        <article class="oferta oferta--eventos">
+          <div class="mancha mancha--laranja" aria-hidden="true"></div>
+          <span class="oferta__icone" aria-hidden="true"><svg><use href="#ic-calendario"/></svg></span>
+          <h3>Eventos</h3>
+          <p>Aulas abertas, encontros e workshops, ao vivo, para aprender e tirar dúvidas na hora.</p>
+          <div><a class="botao botao--claro" href="#eventos" data-ir-aba="eventos">Ver eventos <span class="seta" aria-hidden="true">→</span></a></div>
+        </article>
+        <article class="oferta oferta--cursos">
+          <div class="mancha mancha--verde" aria-hidden="true"></div>
+          <span class="oferta__icone" aria-hidden="true"><svg><use href="#ic-livro"/></svg></span>
+          <h3>Cursos online</h3>
+          <p>Aprenda no seu ritmo, com material organizado e certificado quando disponível.</p>
+          <div><a class="botao botao--principal" href="#cursos" data-ir-aba="cursos">Ver cursos <span class="seta" aria-hidden="true">→</span></a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- /ABA:inicio -->
+
+<!-- =====================================================
+     ABA 2 · EVENTOS
+     ===================================================== -->
+<!-- ABA:eventos -->
+<section class="painel" id="eventos" role="tabpanel" aria-labelledby="aba-eventos" tabindex="-1" hidden
+  data-titulo="Eventos · Nutrensinando"
+  data-descricao="Aulas abertas, encontros e workshops de Nutrição com a Nutrensinando. Veja as próximas datas e faça sua inscrição."
+  data-cta="Ir para a inscrição" data-cta-aba="eventos" data-cta-alvo="inscricao">
+
+  <div class="cabeca-aba fundo-creme pontilhado secao" style="padding-bottom:40px">
+    <div class="deco mancha mancha--verde" data-parallax="-0.1" style="width:200px;height:200px;right:-70px;top:90px" aria-hidden="true"></div>
+    <div class="recipiente">
+      <p class="selo">Ao vivo <span class="ponto" aria-hidden="true"></span> Troca <span class="ponto" aria-hidden="true"></span> Tire suas dúvidas</p>
+      <h1 data-palavras>Eventos: aprenda ao vivo e tire suas <span class="destaque-circulo">dúvidas.<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg></span></h1>
+      <p data-surgir>Encontros para estudantes e nutricionistas, com espaço para conversar de verdade. Confira as próximas datas e garanta sua vaga.</p>
+    </div>
+  </div>
+
+  <section class="secao fundo-branco" aria-labelledby="t-agenda" style="padding-top:64px">
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">Agenda</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-agenda" data-palavras>Próximos eventos</h2>
+      </div>
+      <!-- Os eventos são lidos da lista EVENTOS, no topo de js/site.js -->
+      <div class="eventos" id="lista-eventos" data-sequencia></div>
+    </div>
+  </section>
+
+  <section class="secao fundo-noite pontilhado" id="inscricao" aria-labelledby="t-inscricao">
+    <div class="deco folha" data-parallax="-0.08" style="width:120px;right:2%;top:30px;transform:rotate(170deg);color:#a6e04c" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+    <div class="recipiente inscricao">
+      <div>
+        <span class="rotulo">Inscrição</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-inscricao" data-palavras>Quero participar!</h2>
+        <p>Preencha seus dados e a gente confirma sua inscrição pelo WhatsApp ou e-mail. Ficou com alguma dúvida? É só chamar, conte com a gente.</p>
+        <div class="horarios">
+          <span class="destaque-ig destaque-ig--roxo" aria-hidden="true"><svg><use href="#ic-relogio"/></svg></span>
+          <div>
+            <h3 style="font-size:1.05rem;margin-bottom:6px">Horários de atendimento</h3>
+            <ul id="lista-horarios"></ul>
+          </div>
+        </div>
+      </div>
+
+      <form class="formulario" id="form-inscricao" novalidate>
+        <div class="campo">
+          <label for="f-evento">Evento</label>
+          <select id="f-evento" name="evento" required></select>
+        </div>
+        <div class="campo">
+          <label for="f-nome">Nome completo</label>
+          <input id="f-nome" name="nome" type="text" autocomplete="name" required>
+        </div>
+        <div class="campo">
+          <label for="f-email">E-mail</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required>
+        </div>
+        <div class="campo">
+          <label for="f-whats">WhatsApp com DDD</label>
+          <input id="f-whats" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(21) 99999-9999" required>
+        </div>
+        <fieldset class="campo">
+          <legend>Você é…</legend>
+          <div class="opcoes">
+            <label class="opcao"><input type="radio" name="perfil" value="Estudante" required><span>Estudante</span></label>
+            <label class="opcao"><input type="radio" name="perfil" value="Nutricionista"><span>Nutricionista</span></label>
+            <label class="opcao"><input type="radio" name="perfil" value="Outro"><span>Outro</span></label>
+          </div>
+        </fieldset>
+        <div class="campo">
+          <label for="f-duvida">Quer deixar uma pergunta para o evento? <span style="font-weight:400">(opcional)</span></label>
+          <textarea id="f-duvida" name="duvida"></textarea>
+        </div>
+        <label class="aceite">
+          <input type="checkbox" name="aceite" value="sim" required>
+          <span>Concordo que a Nutrensinando use meus dados só para esta inscrição e para avisos sobre o evento, conforme a <a href="politica-privacidade.html">Política de Privacidade</a>.</span>
+        </label>
+        <button class="botao botao--principal botao--halo" type="submit">Quero me inscrever</button>
+        <p class="mensagem-form" id="msg-form" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</section>
+
+<!-- /ABA:eventos -->
+
+<!-- =====================================================
+     ABA 3 · CURSOS ONLINE
+     ===================================================== -->
+<!-- ABA:cursos -->
+<section class="painel" id="cursos" role="tabpanel" aria-labelledby="aba-cursos" tabindex="-1" hidden
+  data-titulo="Cursos online · Nutrensinando"
+  data-descricao="Cursos online de Nutrição para aprender no seu ritmo, com as nutricionistas Luana e Taiane. Veja os cursos disponíveis e o que você vai aprender."
+  data-cta="Ver cursos" data-cta-aba="cursos" data-cta-alvo="t-grade">
+
+  <div class="cabeca-aba fundo-creme pontilhado secao" style="padding-bottom:40px">
+    <div class="deco mancha mancha--laranja" data-parallax="-0.1" style="width:180px;height:180px;right:-60px;top:100px;opacity:.6" aria-hidden="true"></div>
+    <div class="deco folha" data-parallax="0.08" style="width:110px;left:-14px;bottom:0;transform:rotate(-20deg)" aria-hidden="true"><svg><use href="#folhas"/></svg></div>
+    <div class="recipiente">
+      <p class="selo">No seu ritmo <span class="ponto" aria-hidden="true"></span> Online <span class="ponto" aria-hidden="true"></span> Na prática</p>
+      <h1 data-palavras>Cursos online: aprenda no seu <span class="destaque-circulo">ritmo<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg></span>, com quem vive a Nutrição.</h1>
+      <p data-surgir>Os cursos ficam numa plataforma segura de ensino. Aqui você conhece cada um e, com um clique, vai direto para a página do curso na Hotmart.</p>
+    </div>
+  </div>
+
+  <!-- Curso em destaque (bloco alternado) -->
+  <section class="secao fundo-branco" id="bloco-destaques" aria-label="Cursos em destaque" hidden style="padding-bottom:0">
+    <div class="recipiente" id="lista-destaques"></div>
+  </section>
+
+  <section class="secao fundo-branco" aria-labelledby="t-grade">
+    <div class="recipiente">
+      <div class="cabeca">
+        <span class="rotulo">Todos os cursos</span>
+        <span class="divisor" aria-hidden="true"></span>
+        <h2 id="t-grade" data-palavras tabindex="-1">Escolha seu próximo passo</h2>
+      </div>
+      <!-- Filtros: aparecem sozinhos quando há mais de 4 cursos -->
+      <div class="filtros" id="filtros" hidden></div>
+      <!-- Os cursos são lidos de js/cursos.js -->
+      <div class="grade-cursos" id="grade-cursos"></div>
+    </div>
+  </section>
+
+  <section class="secao fundo-creme" aria-labelledby="t-aluna" style="padding-top:40px">
+    <div class="recipiente">
+      <div class="ja-aluna" data-surgir>
+        <span class="destaque-ig destaque-ig--verde" aria-hidden="true"><span>Alunos</span></span>
+        <div>
+          <h2 id="t-aluna">Já é aluna?</h2>
+          <p>Entre na plataforma para assistir às aulas e baixar seus materiais.</p>
+        </div>
+        <a class="botao botao--roxo" id="link-alunos" href="#" target="_blank" rel="noopener">Acessar minha área de alunos <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- /ABA:cursos -->
+</main>
+
+<!-- Botão flutuante (celular) -->
+<div class="cta-flutuante" aria-hidden="true">
+  <a class="botao botao--principal" href="#inscricao" data-ir-aba="eventos" data-alvo="inscricao" tabindex="-1">Quero me inscrever</a>
+</div>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="rodape">
+  <div class="recipiente">
+    <div class="rodape__grade">
+      <div>
+        <p class="marca"><span class="nutr">Nutr</span><span class="ensinando">ensinando</span></p>
+        <p>Cursos e atualização em Nutrição. Ensino de qualidade e acessível para todos. Vamos aprender juntos?</p>
+      </div>
+      <div>
+        <h2>Fale com a gente</h2>
+        <ul>
+          <li><a id="rod-whats" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-whats"/></svg> WhatsApp</a></li>
+          <li><a id="rod-insta" href="#" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-insta"/></svg> <span id="rod-insta-txt">Instagram</span></a></li>
+          <li><a id="rod-email" href="#"><svg aria-hidden="true"><use href="#ic-email"/></svg> <span id="rod-email-txt">E-mail</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Navegue</h2>
+        <ul>
+          <li><a href="#inicio" data-ir-aba="inicio">Início</a></li>
+          <li><a href="#eventos" data-ir-aba="eventos">Eventos</a></li>
+          <li><a href="#cursos" data-ir-aba="cursos">Cursos online</a></li>
+          <li><a href="politica-privacidade.html">Política de privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rodape__base">
+      <span>© <span id="ano">2026</span> Nutrensinando · [CNPJ OU CRN, SE QUISER EXIBIR]</span>
+      <span>Este site não usa cookies de rastreamento.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="cursor" aria-hidden="true"></div>
+
+<script src="js/cursos.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>
