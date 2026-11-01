@@ -336,7 +336,11 @@ const PAGINAS_GOOGLE_SITES = {
 
     const filtro = { prof: "todas", status: "todos" };
     function desenharGrade() {
-      const lista = CURSOS
+      // Os cursos em destaque já aparecem no bloco de cima; na grade entram só os outros
+      const semDestaque = CURSOS.filter((c) => !sim(c.destaque));
+      const base = semDestaque.length ? semDestaque : CURSOS;
+      if ($("#rotulo-grade")) $("#rotulo-grade").textContent = base.length < CURSOS.length ? "Mais cursos" : "Todos os cursos";
+      const lista = base
         .filter((c) => filtro.prof === "todas" || profsDo(c).includes(filtro.prof))
         .filter((c) => filtro.status === "todos" || c.status === filtro.status)
         .sort((a, b) => sim(b.destaque) - sim(a.destaque));
@@ -493,7 +497,12 @@ const PAGINAS_GOOGLE_SITES = {
     const secaoAlvo = alvo && !alvo.closest("[hidden]") ? alvo.closest("section") : null;
     const r = secaoAlvo && secaoAlvo.getBoundingClientRect();
     const alvoNaTela = r && r.top < innerHeight && r.bottom > 0;
-    caixaFlutuante.classList.toggle("visivel", y > innerHeight * 0.7 && rodape > innerHeight && !alvoNaTela);
+    // ...e também quando já há outro botão laranja à vista
+    const outroBotao = $$(".painel:not([hidden]) .botao--principal").some((bt) => {
+      const rb = bt.getBoundingClientRect();
+      return rb.height && rb.top < innerHeight && rb.bottom > 0;
+    });
+    caixaFlutuante.classList.toggle("visivel", y > innerHeight * 0.7 && rodape > innerHeight && !alvoNaTela && !outroBotao);
 
     if (semMovimento.matches) return;
 

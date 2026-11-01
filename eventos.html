@@ -38,7 +38,7 @@
   --raio: 22px;
   --sombra: 0 18px 40px -22px rgba(42, 13, 51, .45);
   --largura: 1160px;
-  --topo: 124px; /* altura do menu fixo no celular */
+  --topo: 108px; /* altura do menu fixo no celular */
 }
 
 @media (min-width: 900px) {
@@ -237,11 +237,11 @@ p { margin: 0 0 1em; }
 
 /* Botão flutuante no celular */
 .cta-flutuante {
-  position: fixed; left: 16px; right: 16px; bottom: 14px; z-index: 40;
-  transform: translateY(140%); transition: transform .35s ease;
+  position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 40;
+  transform: translate(-50%, 160%); transition: transform .35s ease;
 }
-.cta-flutuante.visivel { transform: translateY(0); }
-.cta-flutuante .botao { width: 100%; }
+.cta-flutuante.visivel { transform: translate(-50%, 0); }
+.cta-flutuante .botao { min-height: 46px; padding: 10px 24px; font-size: .95rem; white-space: nowrap; box-shadow: 0 10px 24px -8px rgba(42, 13, 51, .45); }
 @media (min-width: 900px) { .cta-flutuante { display: none; } }
 
 /* =========================================================
@@ -823,6 +823,32 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
   .deco { transform: none !important; }
 }
 
+/* =========================================================
+   Ajustes do celular
+   ========================================================= */
+@media (max-width: 899px) {
+  /* Menu do topo mais baixo e sólido, para não "vazar" o fundo */
+  .topo, .topo.rolou { background: rgba(255, 248, 235, .96); box-shadow: 0 6px 20px -16px rgba(42, 13, 51, .6); }
+  .topo__linha { padding-top: 6px; padding-bottom: 6px; gap: 4px 12px; }
+  .logo { min-height: 40px; }
+  .logo img { width: 28px; }
+  .logo .marca { font-size: 1.2rem; }
+  .logo small { display: none; }
+  .aba { font-size: .9rem; padding: 8px 10px; }
+
+  .secao { padding: 64px 0; }
+  .abertura { min-height: auto; padding-top: calc(var(--topo) + 32px); padding-bottom: 56px; }
+  .cabeca-aba { padding-top: calc(var(--topo) + 32px); }
+  .cabeca { margin-bottom: 32px; }
+
+  /* Cartões numerados mais compactos */
+  .cartao-num { padding: 22px 20px; }
+  .cartao-num__numero { font-size: 3rem; margin-bottom: 8px; }
+
+  .alternado { margin-bottom: 56px; }
+  .abertura__fotos .etiqueta { font-size: .72rem; padding: 6px 10px; }
+}
+
 /* ---- Ajustes da versão Google Sites ---- */
 .modo-sites { --topo: 0px; }
 .modo-sites .topo, .modo-sites .progresso, .modo-sites .cta-flutuante, .modo-sites .pular { display: none !important; }
@@ -1346,7 +1372,11 @@ const PAGINAS_GOOGLE_SITES = {
 
     const filtro = { prof: "todas", status: "todos" };
     function desenharGrade() {
-      const lista = CURSOS
+      // Os cursos em destaque já aparecem no bloco de cima; na grade entram só os outros
+      const semDestaque = CURSOS.filter((c) => !sim(c.destaque));
+      const base = semDestaque.length ? semDestaque : CURSOS;
+      if ($("#rotulo-grade")) $("#rotulo-grade").textContent = base.length < CURSOS.length ? "Mais cursos" : "Todos os cursos";
+      const lista = base
         .filter((c) => filtro.prof === "todas" || profsDo(c).includes(filtro.prof))
         .filter((c) => filtro.status === "todos" || c.status === filtro.status)
         .sort((a, b) => sim(b.destaque) - sim(a.destaque));
@@ -1503,7 +1533,12 @@ const PAGINAS_GOOGLE_SITES = {
     const secaoAlvo = alvo && !alvo.closest("[hidden]") ? alvo.closest("section") : null;
     const r = secaoAlvo && secaoAlvo.getBoundingClientRect();
     const alvoNaTela = r && r.top < innerHeight && r.bottom > 0;
-    caixaFlutuante.classList.toggle("visivel", y > innerHeight * 0.7 && rodape > innerHeight && !alvoNaTela);
+    // ...e também quando já há outro botão laranja à vista
+    const outroBotao = $$(".painel:not([hidden]) .botao--principal").some((bt) => {
+      const rb = bt.getBoundingClientRect();
+      return rb.height && rb.top < innerHeight && rb.bottom > 0;
+    });
+    caixaFlutuante.classList.toggle("visivel", y > innerHeight * 0.7 && rodape > innerHeight && !alvoNaTela && !outroBotao);
 
     if (semMovimento.matches) return;
 
