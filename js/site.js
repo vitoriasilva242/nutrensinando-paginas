@@ -1,9 +1,15 @@
 /* =========================================================
    CONFIGURAÇÕES DO SITE · Nutrensinando
    ---------------------------------------------------------
-   Troque só o que está entre aspas. Todo o resto do site
-   lê estas informações daqui.
+   O jeito mais fácil de mudar contatos, eventos e cursos é pela
+   PLANILHA do Google (veja PLANILHA_ID abaixo): o site lê a planilha
+   sozinho sempre que alguém abre a página.
+   Os valores deste arquivo só são usados se a planilha não carregar.
    ========================================================= */
+
+// Código da planilha do Google que alimenta o site. É o trecho do link da planilha
+// entre "/d/" e "/edit". A planilha precisa estar como "Qualquer pessoa com o link: Leitor".
+const PLANILHA_ID = "1OqUwWHoEyYROP3I-rKOwKYHMKhbaETscsKEUBEFKhRg";
 
 // Endereço do sistema de eventos (Google Apps Script). Cada evento tem uma página
 // própria nele: este endereço + "?evento=" + o apelido (slug) do evento.
@@ -74,7 +80,17 @@ const PAGINAS_GOOGLE_SITES = {
 
   const preenchido = (v) => v && !/^\[.*\]$/.test(String(v).trim());
   const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const linkWhats = (msg) => `https://wa.me/${String(WHATSAPP).replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
+  // Informações que a planilha pode substituir
+  const dados = {
+    whatsapp: WHATSAPP,
+    email: EMAIL,
+    instagram: INSTAGRAM,
+    areaAlunos: LINK_AREA_ALUNOS,
+    horarios: HORARIOS,
+    eventos: EVENTOS,
+    cursos: window.CURSOS || []
+  };
+  const linkWhats = (msg) => `https://wa.me/${String(dados.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
   const sim = (v) => v === true || /^s/i.test(String(v || ""));
 
   // Versão Google Sites: cada aba é uma página separada, dentro de um "Incorporar"
@@ -97,21 +113,24 @@ const PAGINAS_GOOGLE_SITES = {
 
   /* ---------- Contatos ---------- */
   $("#ano").textContent = new Date().getFullYear();
-  $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
-  $("#rod-insta").href = `https://instagram.com/${INSTAGRAM.replace("@", "")}`;
-  $("#rod-insta-txt").textContent = "@" + INSTAGRAM.replace("@", "");
-  // Contatos ainda não preenchidos ficam escondidos
-  if (preenchido(EMAIL)) {
-    $("#rod-email").href = `mailto:${EMAIL}`;
-    $("#rod-email-txt").textContent = EMAIL;
-  } else {
-    $("#rod-email").closest("li").hidden = true;
-  }
-  if ($("#link-alunos")) $("#link-alunos").href = LINK_AREA_ALUNOS;
-  const horarios = HORARIOS.filter(preenchido);
-  if ($("#lista-horarios")) {
-    if (horarios.length) $("#lista-horarios").innerHTML = horarios.map((h) => `<li>${esc(h)}</li>`).join("");
-    else $("#lista-horarios").closest(".horarios").hidden = true;
+  function desenharContatos() {
+    const insta = String(dados.instagram || "").replace("@", "");
+    $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
+    $("#rod-insta").href = `https://instagram.com/${insta}`;
+    $("#rod-insta-txt").textContent = "@" + insta;
+    // Contatos ainda não preenchidos ficam escondidos
+    const temEmail = preenchido(dados.email);
+    $("#rod-email").closest("li").hidden = !temEmail;
+    if (temEmail) {
+      $("#rod-email").href = `mailto:${dados.email}`;
+      $("#rod-email-txt").textContent = dados.email;
+    }
+    if ($("#link-alunos")) $("#link-alunos").href = dados.areaAlunos;
+    const horarios = (dados.horarios || []).filter(preenchido);
+    if ($("#lista-horarios")) {
+      $("#lista-horarios").innerHTML = horarios.map((h) => `<li>${esc(h)}</li>`).join("");
+      $("#lista-horarios").closest(".horarios").hidden = !horarios.length;
+    }
   }
 
   /* ---------- Abas ---------- */
@@ -193,9 +212,17 @@ const PAGINAS_GOOGLE_SITES = {
 
   /* ---------- Eventos ---------- */
   // Cada evento leva para a compra no Sympla e para a página completa do evento
-  if ($("#lista-eventos")) {
+  // Eventos com data que já passou somem sozinhos
+  function desenharEventos() {
+    if (!$("#lista-eventos")) return;
     const meses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-    $("#lista-eventos").innerHTML = EVENTOS.map((ev, i) => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    const proximos = (dados.eventos || []).filter((ev) => !ev.data || ev.data >= hoje).sort((a, b) => String(a.data).localeCompare(String(b.data)));
+    if (!proximos.length) {
+      $("#lista-eventos").innerHTML = `<p class="aviso-vazio">Novos eventos em breve! Acompanhe pelo Instagram para saber primeiro.</p>`;
+      return;
+    }
+    $("#lista-eventos").innerHTML = proximos.map((ev, i) => {
       const [a, m, d] = String(ev.data).split("-").map(Number);
       const pagina = ev.slug ? `${LINK_APPS_SCRIPT}?evento=${encodeURIComponent(ev.slug)}` : "";
       const inscrever = preenchido(ev.link_sympla)
@@ -225,8 +252,9 @@ const PAGINAS_GOOGLE_SITES = {
 
   /* ---------- Cursos ---------- */
   // Cada cartão leva direto para a Hotmart (ou para o WhatsApp, se o curso estiver em breve/esgotado)
+  let desenharCursos = () => {};
   if ($("#grade-cursos")) {
-    const CURSOS = window.CURSOS || [];
+    let CURSOS = [];
     const PROFS = window.PROFESSORAS || {};
     const rotuloStatus = { disponivel: "Disponível", em_breve: "Em breve", esgotado: "Esgotado" };
     const grade = $("#grade-cursos");
@@ -289,9 +317,9 @@ const PAGINAS_GOOGLE_SITES = {
     }
 
     // Cursos em destaque viram blocos alternados de imagem e texto
-    const destaques = CURSOS.filter((c) => sim(c.destaque));
-    if (destaques.length) {
-      $("#bloco-destaques").hidden = false;
+    function desenharDestaques() {
+      const destaques = CURSOS.filter((c) => sim(c.destaque));
+      $("#bloco-destaques").hidden = !destaques.length;
       $("#lista-destaques").innerHTML = destaques.map((c, n) => `
         <article class="alternado curso-alternado" data-surgir>
           <div class="alternado__img curso__capa">${capa(c)}<span class="status status--${esc(c.status)}">${rotuloStatus[c.status] || ""}</span></div>
@@ -303,6 +331,7 @@ const PAGINAS_GOOGLE_SITES = {
             <div class="curso__acoes curso__acoes--destaque">${botaoCurso(c, "botao botao--principal botao--halo")}</div>
           </div>
         </article>`).join("");
+      $$("#lista-destaques [data-surgir]").forEach((el) => revelar(el));
     }
 
     const filtro = { prof: "todas", status: "todos" };
@@ -317,8 +346,9 @@ const PAGINAS_GOOGLE_SITES = {
         : `<p class="aviso-vazio">Nenhum curso com esses filtros por enquanto. Que tal ver todos?</p>`;
     }
 
-    if (CURSOS.length > 4) {
-      filtros.hidden = false;
+    function desenharFiltros() {
+      filtros.hidden = CURSOS.length <= 4;
+      if (filtros.hidden) return;
       const grupo = (nome, legenda, opcoes) => `
         <fieldset><legend>${legenda}</legend><div class="opcoes">
           ${opcoes.map(([v, t], i) => `<label class="opcao"><input type="radio" name="${nome}" value="${v}" ${i === 0 ? "checked" : ""}><span>${t}</span></label>`).join("")}
@@ -326,13 +356,19 @@ const PAGINAS_GOOGLE_SITES = {
       filtros.innerHTML =
         grupo("prof", "Professora", [["todas", "Todas"], ...Object.keys(PROFS).map((n) => [n, n])]) +
         grupo("status", "Status", [["todos", "Todos"], ["disponivel", "Disponível"], ["em_breve", "Em breve"], ["esgotado", "Esgotado"]]);
-      filtros.addEventListener("change", (e) => {
-        filtro[e.target.name] = e.target.value;
-        desenharGrade();
-      });
     }
-    desenharGrade();
-    grade.setAttribute("data-sequencia", "");
+    filtros.addEventListener("change", (e) => {
+      filtro[e.target.name] = e.target.value;
+      desenharGrade();
+    });
+
+    desenharCursos = () => {
+      CURSOS = (dados.cursos || []).map((c) => ({ ...c, status: c.status || "disponivel" }));
+      desenharDestaques();
+      desenharFiltros();
+      desenharGrade();
+      grade.setAttribute("data-sequencia", "");
+    };
 
     // Clicar em qualquer parte do cartão também leva para a Hotmart
     grade.addEventListener("click", (e) => {
@@ -405,6 +441,8 @@ const PAGINAS_GOOGLE_SITES = {
   numerarSequencias();
 
   const observados = "[data-surgir], [data-palavras], [data-sequencia], .divisor";
+  // Elementos criados depois (ex.: cursos vindos da planilha) também entram nas animações
+  let revelar = (el) => el.classList.add("visivel");
   if ("IntersectionObserver" in window && !semMovimento.matches) {
     const io = new IntersectionObserver((itens) => {
       itens.forEach((it) => {
@@ -415,6 +453,7 @@ const PAGINAS_GOOGLE_SITES = {
       });
     }, { rootMargin: "0px 0px -10% 0px", threshold: 0.12 });
     $$(observados).forEach((el) => io.observe(el));
+    revelar = (el) => io.observe(el);
     // A grade de cursos é redesenhada pelos filtros: mantém visível
     if ($("#filtros")) $("#filtros").addEventListener("change", () => $("#grade-cursos").classList.add("visivel"));
   } else {
@@ -508,7 +547,116 @@ const PAGINAS_GOOGLE_SITES = {
     cursor.remove();
   }
 
+  /* ---------- Planilha (onde a equipe muda as informações) ---------- */
+  // Lê um CSV, respeitando aspas, vírgulas e quebras de linha dentro das células
+  function lerCSV(texto) {
+    const linhas = [];
+    let linha = [], celula = "", aspas = false;
+    for (let i = 0; i < texto.length; i++) {
+      const c = texto[i];
+      if (aspas) {
+        if (c === '"' && texto[i + 1] === '"') { celula += '"'; i++; }
+        else if (c === '"') aspas = false;
+        else celula += c;
+      } else if (c === '"') aspas = true;
+      else if (c === ",") { linha.push(celula); celula = ""; }
+      else if (c === "\n") { linha.push(celula); linhas.push(linha); linha = []; celula = ""; }
+      else if (c !== "\r") celula += c;
+    }
+    if (celula || linha.length) { linha.push(celula); linhas.push(linha); }
+    return linhas;
+  }
+  // "Título do curso" → "titulo_do_curso"
+  const chave = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+  // Pega a coluna cujo nome começa com um destes trechos
+  const col = (linha, ...nomes) => {
+    const k = Object.keys(linha).find((n) => nomes.some((x) => n.startsWith(x)));
+    return k ? linha[k].trim() : "";
+  };
+  const lista = (t) => String(t || "").split(/\n|;/).map((x) => x.trim()).filter(Boolean);
+  // "12/12/2026" → "2026-12-12"
+  const dataISO = (t) => {
+    const m = String(t).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    return m ? `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}` : String(t).trim();
+  };
+
+  async function baixarAba(aba) {
+    const url = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(aba)}`;
+    const resp = await fetch(url, { cache: "no-store" });
+    const texto = await resp.text();
+    if (!resp.ok || texto.trim().startsWith("<")) throw new Error("planilha indisponível");
+    const [cab, ...resto] = lerCSV(texto);
+    const nomes = cab.map(chave);
+    return resto
+      .filter((l) => l.some((c) => c.trim()))
+      .map((l) => Object.fromEntries(nomes.map((n, i) => [n, l[i] || ""])));
+  }
+
+  async function carregarPlanilha() {
+    if (!preenchido(PLANILHA_ID)) return;
+    const [contatos, eventos, cursos] = await Promise.all(["Contatos", "Eventos", "Cursos"].map((a) => baixarAba(a).catch(() => null)));
+    const aparece = (l) => !/^n/i.test(col(l, "mostrar"));
+
+    if (contatos) {
+      const horarios = [];
+      contatos.forEach((l) => {
+        const nome = chave(col(l, "informacao", "campo"));
+        const valor = col(l, "valor", "resposta");
+        if (!valor) return;
+        if (nome.includes("whats")) dados.whatsapp = valor;
+        else if (nome.includes("mail")) dados.email = valor;
+        else if (nome.includes("insta")) dados.instagram = valor;
+        else if (nome.includes("alun")) dados.areaAlunos = valor;
+        else if (nome.includes("horario")) horarios.push(valor);
+      });
+      dados.horarios = horarios;
+    }
+    if (eventos) {
+      dados.eventos = eventos.filter(aparece).filter((l) => col(l, "titulo")).map((l) => ({
+        titulo: col(l, "titulo"),
+        data: dataISO(col(l, "data")),
+        horario: col(l, "horario"),
+        formato: col(l, "formato"),
+        local: col(l, "local"),
+        descricao: col(l, "descricao"),
+        preco: col(l, "preco"),
+        vagas: col(l, "vagas"),
+        link_sympla: col(l, "link_do_sympla", "sympla"),
+        slug: col(l, "apelido", "slug")
+      }));
+    }
+    if (cursos) {
+      const situacao = (t) => { const k = chave(t); return k.startsWith("em_breve") ? "em_breve" : k.startsWith("esgot") ? "esgotado" : "disponivel"; };
+      dados.cursos = cursos.filter(aparece).filter((l) => col(l, "titulo")).map((l) => ({
+        titulo: col(l, "titulo"),
+        subtitulo: col(l, "subtitulo"),
+        imagem: col(l, "foto", "imagem"),
+        professora: col(l, "professora"),
+        carga_horaria: col(l, "carga"),
+        para_quem: col(l, "para_quem"),
+        o_que_aprende: lista(col(l, "o_que", "topicos")),
+        tem_certificado: col(l, "tem_certificado", "certificado"),
+        preco_a_partir: col(l, "preco"),
+        link_compra: col(l, "link_da_hotmart", "link"),
+        status: situacao(col(l, "situacao", "status")),
+        destaque: col(l, "destaque")
+      }));
+    }
+  }
+
+  function desenharTudo() {
+    desenharContatos();
+    desenharEventos();
+    desenharCursos();
+  }
+
   /* ---------- Início ---------- */
   lerEndereco();
   atualizarRolagem();
+  // Espera a planilha (até 4 segundos); se ela não responder, usa o que está neste arquivo
+  const limite = new Promise((ok) => setTimeout(ok, 4000));
+  Promise.race([carregarPlanilha().catch(() => {}), limite]).then(() => {
+    desenharTudo();
+    atualizarRolagem();
+  });
 })();
