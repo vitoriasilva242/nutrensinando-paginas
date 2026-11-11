@@ -836,3 +836,35 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
   .alternado { margin-bottom: 56px; }
   .abertura__fotos .etiqueta { font-size: .72rem; padding: 6px 10px; }
 }
+
+/* Cursos: aviso enquanto não há cursos publicados */
+.cursos-em-breve {
+  max-width: 640px; padding: 32px 28px; border-radius: 28px;
+  background: var(--creme); box-shadow: var(--sombra);
+}
+.cursos-em-breve p { font-size: 1.08rem; color: var(--tinta-suave); margin: 0 0 22px; }
+.cursos-em-breve .ic { width: 20px; height: 20px; }
+
+/* =========================================================
+   Ajustes do celular (nov/2026)
+   ========================================================= */
+@media (max-width: 899px) {
+  /* Ícone dos cartões "Eventos" e "Cursos online" não cobre mais o título */
+  .oferta { min-height: 0; padding-top: 26px; }
+  .oferta__icone { position: static; width: 56px; height: 56px; margin-bottom: 18px; }
+  .oferta__icone svg { width: 26px; height: 26px; }
+}
+@media (max-width: 699px) {
+  /* Texto sempre na frente das manchas coloridas do topo */
+  .abertura .recipiente, .cabeca-aba .recipiente { position: relative; z-index: 2; }
+  .abertura .deco.mancha, .cabeca-aba .deco.mancha { opacity: .35 !important; }
+
+  /* Fotos do topo: cada nome junto da foto certa e o símbolo sem cobrir nada */
+  .abertura__fotos .etiqueta--1 { left: 0; top: 0; bottom: auto; }
+  .abertura__fotos .etiqueta--2 { right: 0; top: auto; bottom: 7%; }
+  .abertura__fotos .simbolo { left: 25%; width: 76px; height: 76px; }
+  .abertura__fotos .simbolo img { width: 48px; }
+
+  /* Botão "área de alunos" em uma linha só */
+  .ja-aluna .botao { width: 100%; justify-content: center; font-size: .95rem; padding-left: 18px; padding-right: 18px; }
+}

@@ -115,6 +115,8 @@ const PAGINAS_GOOGLE_SITES = {
   $("#ano").textContent = new Date().getFullYear();
   function desenharContatos() {
     const insta = String(dados.instagram || "").replace("@", "");
+    const temWhats = String(dados.whatsapp || "").replace(/\D/g, "").length >= 10;
+    $("#rod-whats").closest("li").hidden = !temWhats;
     $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
     $("#rod-insta").href = `https://instagram.com/${insta}`;
     $("#rod-insta-txt").textContent = "@" + insta;
@@ -367,7 +369,32 @@ const PAGINAS_GOOGLE_SITES = {
     });
 
     desenharCursos = () => {
-      CURSOS = (dados.cursos || []).map((c) => ({ ...c, status: c.status || "disponivel" }));
+      // Cursos ainda com texto de exemplo (entre colchetes) não aparecem no site
+      const limpa = (v) => (preenchido(v) ? v : "");
+      CURSOS = (dados.cursos || [])
+        .filter((c) => preenchido(c.titulo))
+        .map((c) => ({
+          ...c,
+          subtitulo: limpa(c.subtitulo),
+          carga_horaria: limpa(c.carga_horaria),
+          para_quem: limpa(c.para_quem),
+          preco_a_partir: limpa(c.preco_a_partir),
+          o_que_aprende: (c.o_que_aprende || []).filter(preenchido),
+          status: c.status || "disponivel"
+        }));
+      if (!CURSOS.length) {
+        $("#bloco-destaques").hidden = true;
+        filtros.hidden = true;
+        if ($("#rotulo-grade")) $("#rotulo-grade").textContent = "Em breve";
+        if ($("#t-grade")) $("#t-grade").textContent = "Os primeiros cursos estão chegando";
+        const insta = String(dados.instagram || "").replace("@", "");
+        grade.innerHTML = `
+          <div class="cursos-em-breve">
+            <p>Estamos preparando cursos online com a mesma base científica e a mesma prática dos nossos eventos. As novidades saem primeiro no Instagram.</p>
+            <a class="botao botao--principal" href="https://instagram.com/${esc(insta)}" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#ic-insta"/></svg> Seguir no Instagram</a>
+          </div>`;
+        return;
+      }
       desenharDestaques();
       desenharFiltros();
       desenharGrade();
