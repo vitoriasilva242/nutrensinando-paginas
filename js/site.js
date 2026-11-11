@@ -196,8 +196,26 @@ const PAGINAS_GOOGLE_SITES = {
     const link = e.target.closest("[data-ir-aba]");
     if (!link) return;
     e.preventDefault();
+    const janela = $("#escolha");
+    // "Quero me inscrever": pergunta se a pessoa quer eventos ou cursos
+    if (link.dataset.irAba === "escolher") {
+      if (janela && janela.showModal) janela.showModal();
+      else abrirAba("eventos", { alvo: "agenda", focar: true });
+      return;
+    }
+    if (janela && janela.open) janela.close();
     abrirAba(link.dataset.irAba, { alvo: link.dataset.alvo || null, focar: true });
   });
+
+  // Fecha a janela de escolha pelo X ou clicando fora dela
+  const janelaEscolha = $("#escolha");
+  if (janelaEscolha) {
+    janelaEscolha.addEventListener("click", (e) => {
+      const r = janelaEscolha.getBoundingClientRect();
+      const fora = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      if ((e.target === janelaEscolha && fora) || e.target.closest(".escolha__fechar")) janelaEscolha.close();
+    });
+  }
 
   // Abre a aba certa pelo endereço (ex.: site.com/#cursos ou #inscricao)
   function lerEndereco() {

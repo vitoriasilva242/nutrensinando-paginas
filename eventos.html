@@ -780,6 +780,36 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 /* O brilho do botão não pode vazar quando o botão tem halo */
 .botao--halo::after { display: none; }
 
+/* Janela "Quero me inscrever" */
+.escolha {
+  border: 0; border-radius: 28px; padding: 32px 24px 26px; width: min(460px, calc(100vw - 32px));
+  background: var(--creme); color: var(--tinta); box-shadow: 0 30px 80px -20px rgba(42, 13, 51, .6);
+}
+.escolha::backdrop { background: rgba(42, 13, 51, .55); backdrop-filter: blur(3px); }
+.escolha[open] { animation: escolha-entra .25s ease-out; }
+@keyframes escolha-entra { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+.escolha h2 { font-size: clamp(1.4rem, 5vw, 1.8rem); margin: 0 36px 6px 0; }
+.escolha > p { color: var(--tinta-suave); margin: 0 0 20px; }
+.escolha__fechar {
+  position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--roxo); font-size: 1.8rem; line-height: 1; cursor: pointer;
+}
+.escolha__fechar:hover { background: var(--roxo-claro); }
+.escolha__opcoes { display: grid; gap: 12px; }
+.escolha__opcao {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
+  padding: 16px 18px; border-radius: 20px; color: #fff; text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.escolha__opcao:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(42, 13, 51, .7); }
+.escolha__opcao--eventos { background: var(--roxo); }
+.escolha__opcao--cursos { background: var(--roxo-noite); }
+.escolha__opcao .oferta__icone { width: 48px; height: 48px; }
+.escolha__opcao .oferta__icone svg { width: 24px; height: 24px; }
+.escolha__opcao b { display: block; font-family: var(--fonte-marca); font-size: 1.15rem; }
+.escolha__opcao small { display: block; color: #ecdff1; font-size: .88rem; }
+.escolha__opcao .seta { font-size: 1.3rem; color: var(--laranja); }
+
 /* Bloco "Já é aluna?" */
 .ja-aluna {
   display: grid; gap: 22px; align-items: center; justify-items: start;
@@ -928,7 +958,7 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
       <button class="aba" role="tab" id="aba-eventos" aria-controls="eventos" aria-selected="false" tabindex="-1">Eventos</button>
       <button class="aba" role="tab" id="aba-cursos" aria-controls="cursos" aria-selected="false" tabindex="-1">Cursos</button>
     </div>
-    <a class="botao botao--principal botao--pequeno topo__cta" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">Quero me inscrever</a>
+    <a class="botao botao--principal botao--pequeno topo__cta" href="#agenda" data-ir-aba="escolher">Quero me inscrever</a>
   </div>
 </header>
 
@@ -1016,8 +1046,27 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 
 <!-- Botão flutuante (celular) -->
 <div class="cta-flutuante" aria-hidden="true">
-  <a class="botao botao--principal" href="#agenda" data-ir-aba="eventos" data-alvo="agenda" tabindex="-1">Quero me inscrever</a>
+  <a class="botao botao--principal" href="#agenda" data-ir-aba="escolher" tabindex="-1">Quero me inscrever</a>
 </div>
+
+<!-- Janela "Quero me inscrever": escolher entre eventos e cursos -->
+<dialog class="escolha" id="escolha" aria-labelledby="t-escolha">
+  <button class="escolha__fechar" type="button" aria-label="Fechar">×</button>
+  <h2 id="t-escolha">Onde você quer se inscrever?</h2>
+  <p>Escolha o jeito de aprender que combina com você.</p>
+  <div class="escolha__opcoes">
+    <a class="escolha__opcao escolha__opcao--eventos" href="#agenda" data-ir-aba="eventos" data-alvo="agenda">
+      <span class="oferta__icone" aria-hidden="true"><svg><use href="#ic-calendario"/></svg></span>
+      <span><b>Eventos ao vivo</b><small>Aulas abertas, encontros e workshops</small></span>
+      <span class="seta" aria-hidden="true">→</span>
+    </a>
+    <a class="escolha__opcao escolha__opcao--cursos" href="#cursos" data-ir-aba="cursos" data-alvo="t-grade">
+      <span class="oferta__icone" aria-hidden="true"><svg><use href="#ic-livro"/></svg></span>
+      <span><b>Cursos online</b><small>Aprenda no seu ritmo, quando quiser</small></span>
+      <span class="seta" aria-hidden="true">→</span>
+    </a>
+  </div>
+</dialog>
 
 <!-- ============ RODAPÉ ============ -->
 <footer class="rodape">
@@ -1253,8 +1302,26 @@ const PAGINAS_GOOGLE_SITES = {
     const link = e.target.closest("[data-ir-aba]");
     if (!link) return;
     e.preventDefault();
+    const janela = $("#escolha");
+    // "Quero me inscrever": pergunta se a pessoa quer eventos ou cursos
+    if (link.dataset.irAba === "escolher") {
+      if (janela && janela.showModal) janela.showModal();
+      else abrirAba("eventos", { alvo: "agenda", focar: true });
+      return;
+    }
+    if (janela && janela.open) janela.close();
     abrirAba(link.dataset.irAba, { alvo: link.dataset.alvo || null, focar: true });
   });
+
+  // Fecha a janela de escolha pelo X ou clicando fora dela
+  const janelaEscolha = $("#escolha");
+  if (janelaEscolha) {
+    janelaEscolha.addEventListener("click", (e) => {
+      const r = janelaEscolha.getBoundingClientRect();
+      const fora = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      if ((e.target === janelaEscolha && fora) || e.target.closest(".escolha__fechar")) janelaEscolha.close();
+    });
+  }
 
   // Abre a aba certa pelo endereço (ex.: site.com/#cursos ou #inscricao)
   function lerEndereco() {

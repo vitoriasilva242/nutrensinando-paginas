@@ -768,6 +768,36 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 /* O brilho do botão não pode vazar quando o botão tem halo */
 .botao--halo::after { display: none; }
 
+/* Janela "Quero me inscrever" */
+.escolha {
+  border: 0; border-radius: 28px; padding: 32px 24px 26px; width: min(460px, calc(100vw - 32px));
+  background: var(--creme); color: var(--tinta); box-shadow: 0 30px 80px -20px rgba(42, 13, 51, .6);
+}
+.escolha::backdrop { background: rgba(42, 13, 51, .55); backdrop-filter: blur(3px); }
+.escolha[open] { animation: escolha-entra .25s ease-out; }
+@keyframes escolha-entra { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+.escolha h2 { font-size: clamp(1.4rem, 5vw, 1.8rem); margin: 0 36px 6px 0; }
+.escolha > p { color: var(--tinta-suave); margin: 0 0 20px; }
+.escolha__fechar {
+  position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--roxo); font-size: 1.8rem; line-height: 1; cursor: pointer;
+}
+.escolha__fechar:hover { background: var(--roxo-claro); }
+.escolha__opcoes { display: grid; gap: 12px; }
+.escolha__opcao {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
+  padding: 16px 18px; border-radius: 20px; color: #fff; text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+.escolha__opcao:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(42, 13, 51, .7); }
+.escolha__opcao--eventos { background: var(--roxo); }
+.escolha__opcao--cursos { background: var(--roxo-noite); }
+.escolha__opcao .oferta__icone { width: 48px; height: 48px; }
+.escolha__opcao .oferta__icone svg { width: 24px; height: 24px; }
+.escolha__opcao b { display: block; font-family: var(--fonte-marca); font-size: 1.15rem; }
+.escolha__opcao small { display: block; color: #ecdff1; font-size: .88rem; }
+.escolha__opcao .seta { font-size: 1.3rem; color: var(--laranja); }
+
 /* Bloco "Já é aluna?" */
 .ja-aluna {
   display: grid; gap: 22px; align-items: center; justify-items: start;
