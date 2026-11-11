@@ -302,15 +302,15 @@ const PAGINAS_GOOGLE_SITES = {
           </div>
           <div class="curso__corpo">
             <h3>${esc(c.titulo)}</h3>
-            <p class="curso__sub">${esc(c.subtitulo)}</p>
+            ${preenchido(c.subtitulo) ? `<p class="curso__sub">${esc(c.subtitulo)}</p>` : ""}
             <div class="curso__info">
-              <span><svg class="ic" aria-hidden="true"><use href="#ic-relogio"/></svg>${esc(c.carga_horaria)}</span>
+              ${preenchido(c.carga_horaria) ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-relogio"/></svg>${esc(c.carga_horaria)}</span>` : ""}
               ${sim(c.tem_certificado) ? '<span><svg class="ic" aria-hidden="true"><use href="#ic-certificado"/></svg>Certificado</span>' : ""}
             </div>
-            <p class="curso__para"><b>Para quem é:</b> ${esc(c.para_quem)}</p>
-            <ul class="lista-check">${(c.o_que_aprende || []).map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+            ${preenchido(c.para_quem) ? `<p class="curso__para"><b>Para quem é:</b> ${esc(c.para_quem)}</p>` : ""}
+            <ul class="lista-check">${(c.o_que_aprende || []).filter(preenchido).map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
             <p class="curso__profs"><span class="curso__fotos">${fotosProfs(c)}</span>Com ${esc(nomeProfs(c))}</p>
-            ${c.preco_a_partir ? `<p class="curso__preco">A partir de <b>${esc(c.preco_a_partir)}</b></p>` : ""}
+            ${preenchido(c.preco_a_partir) ? `<p class="curso__preco">A partir de <b>${esc(c.preco_a_partir)}</b></p>` : ""}
             <div class="curso__acoes">${botaoCurso(c)}</div>
           </div>
         </article>`;
@@ -323,12 +323,18 @@ const PAGINAS_GOOGLE_SITES = {
       $("#lista-destaques").innerHTML = destaques.map((c, n) => `
         <article class="alternado curso-alternado" data-surgir>
           <div class="alternado__img curso__capa">${capa(c)}<span class="status status--${esc(c.status)}">${rotuloStatus[c.status] || ""}</span></div>
-          <div>
-            <span class="num-pequeno">0.${n + 1} · Em destaque</span>
+          <div class="destaque__texto">
+            <span class="etiqueta-destaque">★ Curso em destaque</span>
             <h3>${esc(c.titulo)}</h3>
-            <p>${esc(c.subtitulo)}</p>
-            <ul class="lista-check">${(c.o_que_aprende || []).slice(0, 3).map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
-            <div class="curso__acoes curso__acoes--destaque">${botaoCurso(c, "botao botao--principal botao--halo")}</div>
+            ${preenchido(c.subtitulo) ? `<p class="destaque__sub">${esc(c.subtitulo)}</p>` : ""}
+            <div class="curso__info">
+              ${preenchido(c.carga_horaria) ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-relogio"/></svg>${esc(c.carga_horaria)}</span>` : ""}
+              ${sim(c.tem_certificado) ? '<span><svg class="ic" aria-hidden="true"><use href="#ic-certificado"/></svg>Certificado</span>' : ""}
+              ${profsDo(c).length ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-pessoas"/></svg>Com ${esc(nomeProfs(c))}</span>` : ""}
+            </div>
+            <ul class="lista-check">${(c.o_que_aprende || []).filter(preenchido).slice(0, 4).map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+            ${preenchido(c.preco_a_partir) ? `<p class="curso__preco">A partir de <b>${esc(c.preco_a_partir)}</b></p>` : ""}
+            <div class="curso__acoes curso__acoes--destaque">${botaoCurso(c)}</div>
           </div>
         </article>`).join("");
       $$("#lista-destaques [data-surgir]").forEach((el) => revelar(el));
@@ -372,6 +378,8 @@ const PAGINAS_GOOGLE_SITES = {
       desenharFiltros();
       desenharGrade();
       grade.setAttribute("data-sequencia", "");
+      numerarSequencias();
+      revelar(grade);
     };
 
     // Clicar em qualquer parte do cartão também leva para a Hotmart

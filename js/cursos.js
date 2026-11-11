@@ -30,34 +30,35 @@
 
 window.CURSOS = [
   {
-    titulo: "[NOME DO CURSO 1]",
-    subtitulo: "[Uma frase curta sobre o curso]",
+    titulo: "Nutrição Clínica na Prática (curso teste)",
+    subtitulo: "Do diagnóstico nutricional à conduta: casos reais para atender com segurança.",
     imagem: "",
     professora: "Luana",
-    carga_horaria: "[X horas]",
-    para_quem: "[Para quem é este curso. Ex.: estudantes a partir do 3º período e nutricionistas recém-formados.]",
+    carga_horaria: "20 horas",
+    para_quem: "Estudantes a partir do 5º período e nutricionistas recém-formados.",
     o_que_aprende: [
-      "[Tópico 1]",
-      "[Tópico 2]",
-      "[Tópico 3]"
+      "Avaliação nutricional completa",
+      "Cálculo de necessidades energéticas",
+      "Condutas em diabetes e hipertensão",
+      "Discussão de casos clínicos"
     ],
     tem_certificado: "sim",
-    preco_a_partir: "[R$ 000 ou 12x de R$ 00]",
+    preco_a_partir: "R$ 197 ou 12x de R$ 19,70",
     link_compra: "https://hotmart.com/pt-br", // TESTE: troque pelo link do curso
     status: "disponivel",
     destaque: "sim"
   },
   {
-    titulo: "[NOME DO CURSO 2]",
-    subtitulo: "[Uma frase curta sobre o curso]",
+    titulo: "Gestão em Unidades de Alimentação (curso teste)",
+    subtitulo: "Ferramentas de qualidade e gestão de equipe para quem atua em UAN.",
     imagem: "",
     professora: "Taiane",
-    carga_horaria: "[X horas]",
-    para_quem: "[Para quem é este curso]",
+    carga_horaria: "12 horas",
+    para_quem: "Nutricionistas e estudantes interessados em produção de refeições.",
     o_que_aprende: [
-      "[Tópico 1]",
-      "[Tópico 2]",
-      "[Tópico 3]"
+      "Boas práticas e controle de qualidade",
+      "Fichas técnicas e custos",
+      "Liderança de equipe"
     ],
     tem_certificado: "sim",
     preco_a_partir: "",
@@ -66,19 +67,19 @@ window.CURSOS = [
     destaque: "não"
   },
   {
-    titulo: "[NOME DO CURSO 3]",
-    subtitulo: "[Uma frase curta sobre o curso]",
+    titulo: "Alimentação Vegetariana sem Mitos (curso teste)",
+    subtitulo: "Como planejar dietas vegetarianas e veganas completas e equilibradas.",
     imagem: "",
     professora: "as duas",
-    carga_horaria: "[X horas]",
-    para_quem: "[Para quem é este curso]",
+    carga_horaria: "8 horas",
+    para_quem: "Estudantes e nutricionistas de todas as áreas.",
     o_que_aprende: [
-      "[Tópico 1]",
-      "[Tópico 2]",
-      "[Tópico 3]"
+      "Proteínas e combinações vegetais",
+      "Vitamina B12, ferro e zinco",
+      "Montagem de cardápios"
     ],
-    tem_certificado: "não",
-    preco_a_partir: "[R$ 000]",
+    tem_certificado: "sim",
+    preco_a_partir: "R$ 97",
     link_compra: "https://hotmart.com/pt-br", // TESTE: troque pelo link do curso
     status: "disponivel",
     destaque: "não"
