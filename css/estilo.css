@@ -887,3 +887,24 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
   .alternado { margin-bottom: 56px; }
   .abertura__fotos .etiqueta { font-size: .72rem; padding: 6px 10px; }
 }
+
+/* =========================================================
+   Fale conosco (WhatsApp)
+   ========================================================= */
+.fale { display: grid; gap: 14px; max-width: 980px; margin: 0 auto; }
+@media (min-width: 860px) { .fale { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+.fale__opcao {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 22px; padding: 18px 18px; color: #fff; text-decoration: none;
+  transition: background .2s, transform .2s, border-color .2s;
+}
+.fundo-noite a.fale__opcao { color: #fff; }
+.fale__opcao:hover, .fale__opcao:focus-visible { background: rgba(255, 255, 255, .13); border-color: var(--verde); transform: translateY(-2px); }
+.fale__opcao .oferta__icone { width: 52px; height: 52px; }
+.fale__opcao .oferta__icone svg { width: 24px; height: 24px; }
+.fale__opcao b { display: block; font-size: 1.02rem; line-height: 1.25; }
+.fale__opcao small { display: block; color: #dccbe3; font-size: .86rem; margin-top: 2px; }
+.fale__opcao > span:nth-child(2) { flex: 1; }
+.fale__whats { flex: none; width: 26px; height: 26px; color: var(--verde); }
+.fale__nota { text-align: center; margin: 26px 0 0; font-size: .92rem; color: #dccbe3; }
