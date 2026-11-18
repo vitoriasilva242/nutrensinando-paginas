@@ -651,6 +651,7 @@ const PAGINAS_GOOGLE_SITES = {
         const nome = chave(col(l, "informacao", "campo"));
         const valor = col(l, "valor", "resposta");
         if (!valor) return;
+        if (nome.includes("whats") && nome.includes("atend")) return; // número das nutricionistas: só o robô usa
         if (nome.includes("whats")) dados.whatsapp = valor;
         else if (nome.includes("mail")) dados.email = valor;
         else if (nome.includes("insta")) dados.instagram = valor;
