@@ -1,33 +1,25 @@
 /* =========================================================
-   ROBÔ DO WHATSAPP · Nutrensinando
+   CONVERSA DO ROBÔ · Nutrensinando
    ---------------------------------------------------------
-   Este arquivo recebe as mensagens do WhatsApp (pela API oficial
-   da Meta, a "Cloud API") e responde sozinho:
+   Aqui fica a conversa do robô (usada pelo api/telegram.mjs):
 
      Menu → [Cursos] [Eventos] [Falar com a equipe]
 
    - Cursos e eventos vêm da MESMA planilha do site (abas Cursos e Eventos).
-   - Os textos do robô podem ser trocados na aba "Robô" da planilha
+   - Os textos podem ser trocados na aba "Robô" da planilha
      (colunas: Mensagem | Texto). Se a aba não existir, valem os textos abaixo.
    - "Falar com a equipe": se a aba Contatos tiver a linha
      "WhatsApp atendimento", o robô manda um botão que abre o WhatsApp
-     das nutricionistas com a mensagem pronta. Se não tiver, o robô avisa
-     que elas vão responder ali mesmo e fica quieto naquela conversa por 24h.
+     das nutricionistas com a mensagem pronta. Se não tiver, avisa que
+     elas vão responder ali mesmo e fica quieto naquela conversa por 24h.
 
-   Configuração (Vercel → Settings → Environment Variables):
-     WHATSAPP_TOKEN            token permanente do app da Meta
-     WHATSAPP_PHONE_NUMBER_ID  "Phone number ID" do número do robô
-     WHATSAPP_VERIFY_TOKEN     uma senha qualquer, a mesma colocada no webhook da Meta
-     WHATSAPP_APP_SECRET       (recomendado) "App secret" do app da Meta
    Opcional (memória entre conversas, ex.: Upstash Redis pela Vercel):
      KV_REST_API_URL / KV_REST_API_TOKEN  (ou UPSTASH_REDIS_REST_URL / _TOKEN)
+   O "_" no nome do arquivo faz a Vercel não tratar este arquivo como endereço.
    ========================================================= */
-
-import crypto from "node:crypto";
 
 const PLANILHA_ID = process.env.PLANILHA_ID || "1OqUwWHoEyYROP3I-rKOwKYHMKhbaETscsKEUBEFKhRg";
 const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwimcLcGROb01U5CBNf_43F1xW4LimZZQtqHMT8RqKLe6tlHMCPiakk6Yw/exec";
-const GRAPH = `https://graph.facebook.com/${process.env.GRAPH_VERSION || "v23.0"}`;
 const PAUSA_SEGUNDOS = 24 * 60 * 60;
 
 // Textos padrão. {nome} vira o primeiro nome da pessoa.
@@ -164,21 +156,11 @@ async function existe(k) {
 }
 async function apagar(k) { await kv("DEL", k); memoria.delete(k); }
 
-/* ---------------- Envio pelo WhatsApp ---------------- */
+/* ---------------- Envio ---------------- */
 
-// Envio padrão: Cloud API da Meta. Pode ser trocado por outro (ex.: Twilio) com executarCom().
-let enviar;
-const enviarMeta = async (corpo) => {
-  const r = await fetch(`${GRAPH}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", ...corpo })
-  });
-  if (!r.ok) console.error("Erro ao enviar:", r.status, await r.text());
-};
-enviar = enviarMeta;
+// Quem chama (ex.: Telegram) recebe as respostas numa lista e manda do seu jeito
+let enviar = async () => {};
 export function trocarEnvio(fn) { enviar = fn; } // usado nos testes
-// Roda a conversa guardando as respostas numa lista (em vez de mandar pela Meta)
 export async function executarCom(msg, contato) {
   const saida = [];
   const anterior = enviar;
@@ -248,7 +230,7 @@ async function falarComEquipe(para, d, ctx, assunto) {
   if (numero) {
     const n = numero.length === 10 || numero.length === 11 ? "55" + numero : numero;
     const sobre = assunto === "cursos" ? " sobre os cursos" : assunto === "eventos" ? " sobre os eventos" : "";
-    const msg = `Oi, Luana e Taiane! ${ctx.nome ? `Aqui é ${ctx.nome}. ` : ""}Vim pelo WhatsApp da Nutrensinando e queria falar com vocês${sobre}.`;
+    const msg = `Oi, Luana e Taiane! ${ctx.nome ? `Aqui é ${ctx.nome}. ` : ""}Vim pelo atendimento on-line da Nutrensinando e queria falar com vocês${sobre}.`;
     return botaoLink(para, preenche(d.textos.falar_equipe, ctx), "Falar com elas", `https://wa.me/${n}?text=${encodeURIComponent(msg)}`);
   }
   // Sem número de atendimento: elas respondem nesta mesma conversa; o robô fica quieto
@@ -297,42 +279,4 @@ export async function responder(msg, contato = {}) {
       return jaViu ? "nao_entendi" : "menu";
     }
   }
-}
-
-/* ---------------- Webhook ---------------- */
-
-// A Meta confirma o endereço do webhook com um GET
-export async function GET(request) {
-  const p = new URL(request.url).searchParams;
-  if (p.get("hub.mode") === "subscribe" && p.get("hub.verify_token") === process.env.WHATSAPP_VERIFY_TOKEN) {
-    return new Response(p.get("hub.challenge") || "", { status: 200 });
-  }
-  return new Response("Robô da Nutrensinando no ar.", { status: request.url.includes("hub.") ? 403 : 200 });
-}
-
-export async function POST(request) {
-  const bruto = await request.text();
-  const segredo = process.env.WHATSAPP_APP_SECRET;
-  if (segredo) {
-    const esperado = "sha256=" + crypto.createHmac("sha256", segredo).update(bruto).digest("hex");
-    const veio = request.headers.get("x-hub-signature-256") || "";
-    if (veio.length !== esperado.length || !crypto.timingSafeEqual(Buffer.from(veio), Buffer.from(esperado))) {
-      return new Response("assinatura inválida", { status: 401 });
-    }
-  }
-  let corpo;
-  try { corpo = JSON.parse(bruto); } catch { return new Response("ok"); }
-
-  for (const entrada of corpo.entry || []) {
-    for (const mudanca of entrada.changes || []) {
-      const v = mudanca.value || {};
-      // Coexistência: quando a cliente responde pelo app, o robô fica quieto naquela conversa
-      for (const eco of v.message_echoes || []) if (eco.to) await guardar(`pausa:${eco.to}`, PAUSA_SEGUNDOS);
-      for (const msg of v.messages || []) {
-        const contato = (v.contacts || []).find((c) => c.wa_id === msg.from) || v.contacts?.[0];
-        try { await responder(msg, contato); } catch (e) { console.error("Erro no robô:", e); }
-      }
-    }
-  }
-  return new Response("ok");
 }

@@ -122,7 +122,7 @@ const PAGINAS_GOOGLE_SITES = {
     const insta = String(dados.instagram || "").replace("@", "");
     $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
     // Seção "Fale conosco": cada botão abre o WhatsApp com uma mensagem pronta.
-    // As palavras CURSO / EVENTO na mensagem ajudam o robô do WhatsApp a já ir para o assunto certo.
+    // As palavras CURSO / EVENTO deixam claro o assunto para quem atende.
     const msgsFale = {
       curso: "Oi! Vim pelo site e tenho interesse em um CURSO da Nutrensinando.",
       evento: "Oi! Vim pelo site e tenho interesse em um EVENTO da Nutrensinando.",

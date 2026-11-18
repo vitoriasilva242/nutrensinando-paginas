@@ -1,0 +1,31 @@
+# Robô de atendimento · Nutrensinando (Telegram)
+
+- `api/_robo.mjs`: a conversa (menu, cursos, eventos, falar com a equipe). Lê a mesma planilha do site.
+- `api/telegram.mjs`: liga a conversa ao Telegram.
+
+```
+/start  →  [Cursos] [Eventos] [Falar com a equipe]
+             │         │            │
+       aba Cursos  aba Eventos   botão que abre o WhatsApp da Luana e da Taiane
+       (Hotmart)   (Sympla)      com a mensagem pronta
+```
+
+## Como ligar
+
+1. No Telegram, fale com **@BotFather** → `/newbot` → escolha o nome e o usuário (terminando em `bot`). Guarde o **token**.
+2. Vercel → projeto → **Settings → Environment Variables** → crie `TELEGRAM_BOT_TOKEN` com o token. Depois faça um **Redeploy**.
+3. Abra `https://nutrensinando-paginas.vercel.app/api/telegram?configurar=1`. Deve aparecer "Pronto!".
+4. No Telegram, procure o robô pelo usuário e toque em **Começar**.
+
+## Planilha
+
+- Aba **Contatos**, linha **WhatsApp atendimento**: número da Luana e da Taiane. O botão "Falar com a equipe" abre esse WhatsApp. Se a linha não existir, o robô diz que elas respondem ali mesmo e fica quieto na conversa por 24 horas.
+- Aba **Robô** (opcional), colunas **Mensagem | Texto**, para trocar os textos. `{nome}` vira o primeiro nome da pessoa. As mensagens que dá para trocar são: `boas_vindas`, `cursos_intro`, `sem_cursos`, `eventos_intro`, `sem_eventos`, `depois_da_lista`, `falar_equipe`, `falar_equipe_aqui` e `nao_entendi`.
+
+## Links diretos para um assunto
+
+`https://t.me/USUARIO_DO_ROBO?start=curso` abre o robô já na lista de cursos. Também funciona com `start=evento` e `start=falar`.
+
+## Memória (opcional)
+
+Vercel → **Storage → Upstash (Redis)**, plano gratuito, conectado ao projeto. Serve para o robô lembrar quem já viu o menu e quem pediu atendimento. Sem isso, ele funciona igual, mas pode esquecer depois de um tempo.

@@ -1,7 +1,7 @@
 /* =========================================================
-   ROBÔ · versão Telegram (para testar a conversa)
+   ROBÔ DO TELEGRAM · Nutrensinando
    ---------------------------------------------------------
-   Mesma conversa do api/whatsapp.mjs, com botões do Telegram.
+   A conversa fica em api/_robo.mjs; aqui ela é ligada ao Telegram.
 
    Como ligar:
    1. No Telegram, fale com @BotFather → /newbot → escolha nome e usuário.
@@ -14,7 +14,7 @@
    ========================================================= */
 
 import crypto from "node:crypto";
-import { executarCom } from "./whatsapp.mjs";
+import { executarCom } from "./_robo.mjs";
 
 const TOKEN = () => process.env.TELEGRAM_BOT_TOKEN || "";
 const API = (metodo) => `https://api.telegram.org/bot${TOKEN()}/${metodo}`;
@@ -81,7 +81,9 @@ export async function POST(request) {
     msg = { from: String(chat), id: "tg" + u.update_id, type: "interactive", interactive: { button_reply: { id: q.data } } };
   } else if (u.message?.text) {
     chat = u.message.chat.id; quem = u.message.from;
-    const texto = u.message.text.replace(/^\/start\b.*/, "oi"); // primeira conversa no Telegram começa com /start
+    // Primeira conversa começa com /start. O link do site pode mandar o assunto: t.me/ROBO?start=curso
+    const inicio = u.message.text.match(/^\/start(?:\s+(\S+))?/);
+    const texto = inicio ? (inicio[1] || "oi") : u.message.text;
     msg = { from: String(chat), id: "tg" + u.update_id, type: "text", text: { body: texto } };
   } else {
     return new Response("ok");
