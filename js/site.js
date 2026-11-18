@@ -90,7 +90,12 @@ const PAGINAS_GOOGLE_SITES = {
     eventos: EVENTOS,
     cursos: window.CURSOS || []
   };
-  const linkWhats = (msg) => `https://wa.me/${String(dados.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(msg)}`;
+  // Aceita o número em qualquer formato; se vier só com DDD + número (10 ou 11 dígitos), põe o 55 do Brasil na frente
+  const numeroWhats = () => {
+    const n = String(dados.whatsapp || "").replace(/\D/g, "");
+    return n.length === 10 || n.length === 11 ? "55" + n : n;
+  };
+  const linkWhats = (msg) => `https://wa.me/${numeroWhats()}?text=${encodeURIComponent(msg)}`;
   const sim = (v) => v === true || /^s/i.test(String(v || ""));
 
   // Versão Google Sites: cada aba é uma página separada, dentro de um "Incorporar"
