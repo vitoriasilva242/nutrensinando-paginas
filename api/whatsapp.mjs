@@ -166,7 +166,9 @@ async function apagar(k) { await kv("DEL", k); memoria.delete(k); }
 
 /* ---------------- Envio pelo WhatsApp ---------------- */
 
-export let enviar = async (corpo) => {
+// Envio padrão: Cloud API da Meta. Pode ser trocado por outro (ex.: Twilio) com executarCom().
+let enviar;
+const enviarMeta = async (corpo) => {
   const r = await fetch(`${GRAPH}/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
     method: "POST",
     headers: { Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`, "Content-Type": "application/json" },
@@ -174,7 +176,16 @@ export let enviar = async (corpo) => {
   });
   if (!r.ok) console.error("Erro ao enviar:", r.status, await r.text());
 };
+enviar = enviarMeta;
 export function trocarEnvio(fn) { enviar = fn; } // usado nos testes
+// Roda a conversa guardando as respostas numa lista (em vez de mandar pela Meta)
+export async function executarCom(msg, contato) {
+  const saida = [];
+  const anterior = enviar;
+  enviar = async (c) => { saida.push(c); };
+  try { await responder(msg, contato); } finally { enviar = anterior; }
+  return saida;
+}
 
 const corta = (t, n) => (t.length > n ? t.slice(0, n - 1) + "…" : t);
 const texto = (para, body) => enviar({ to: para, type: "text", text: { body: corta(body, 4096), preview_url: false } });
@@ -259,6 +270,10 @@ export async function responder(msg, contato = {}) {
   if (msg.type === "interactive") escolha = msg.interactive?.button_reply?.id || msg.interactive?.list_reply?.id || "";
   else if (msg.type === "button") escolha = chave(msg.button?.payload || msg.button?.text);
   const escrito = msg.type === "text" ? chave(msg.text?.body).replace(/_/g, " ") : "";
+
+  // Números digitados (modo texto, ex.: teste pelo Twilio): 1 cursos, 2 eventos, 3 equipe, 0 menu
+  const NUMEROS = { "1": "cursos", "2": "eventos", "3": "equipe" };
+  if (NUMEROS[escrito]) escolha = NUMEROS[escrito];
 
   if (QUER_MENU.test(escrito)) { await apagar(`pausa:${para}`); escolha = "menu"; }
   if (!escolha && (await existe(`pausa:${para}`))) return "pausado";
