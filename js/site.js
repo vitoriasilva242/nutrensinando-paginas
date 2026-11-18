@@ -19,9 +19,9 @@ const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwi
 // TESTE: área de alunos geral da Hotmart. Troque pelo link de vocês.
 const LINK_AREA_ALUNOS = "https://consumer.hotmart.com/";
 
-// WhatsApp: só números, com código do país (55) e DDD. Ex.: "5521999999999"
-// Vazio = o WhatsApp abre e a pessoa escolhe o contato (bom para testar).
-const WHATSAPP = "";
+// Usuário do robô de atendimento no Telegram, sem o @ (o site abre t.me/USUARIO).
+// Também dá para trocar pela planilha: aba Contatos, linha "Telegram".
+const TELEGRAM = "nutrensinando_teste_bot";
 
 // Usuário do Instagram, sem o @
 const INSTAGRAM = "nutrensinando_";
@@ -82,7 +82,7 @@ const PAGINAS_GOOGLE_SITES = {
   const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   // Informações que a planilha pode substituir
   const dados = {
-    whatsapp: WHATSAPP,
+    telegram: TELEGRAM,
     email: EMAIL,
     instagram: INSTAGRAM,
     areaAlunos: LINK_AREA_ALUNOS,
@@ -90,12 +90,11 @@ const PAGINAS_GOOGLE_SITES = {
     eventos: EVENTOS,
     cursos: window.CURSOS || []
   };
-  // Aceita o número em qualquer formato; se vier só com DDD + número (10 ou 11 dígitos), põe o 55 do Brasil na frente
-  const numeroWhats = () => {
-    const n = String(dados.whatsapp || "").replace(/\D/g, "");
-    return n.length === 10 || n.length === 11 ? "55" + n : n;
+  // Abre o robô no Telegram já no assunto: "curso", "evento" ou "falar" (falar com a equipe)
+  const linkRobo = (assunto = "") => {
+    const u = String(dados.telegram || "").replace(/^@/, "").replace(/^https?:\/\/t\.me\//, "").trim();
+    return `https://t.me/${u}${assunto ? `?start=${assunto}` : ""}`;
   };
-  const linkWhats = (msg) => `https://wa.me/${numeroWhats()}?text=${encodeURIComponent(msg)}`;
   const sim = (v) => v === true || /^s/i.test(String(v || ""));
 
   // Versão Google Sites: cada aba é uma página separada, dentro de um "Incorporar"
@@ -120,15 +119,9 @@ const PAGINAS_GOOGLE_SITES = {
   $("#ano").textContent = new Date().getFullYear();
   function desenharContatos() {
     const insta = String(dados.instagram || "").replace("@", "");
-    $("#rod-whats").href = linkWhats("Oi, pessoal! Vim pelo site da Nutrensinando e queria tirar uma dúvida.");
-    // Seção "Fale conosco": cada botão abre o WhatsApp com uma mensagem pronta.
-    // As palavras CURSO / EVENTO deixam claro o assunto para quem atende.
-    const msgsFale = {
-      curso: "Oi! Vim pelo site e tenho interesse em um CURSO da Nutrensinando.",
-      evento: "Oi! Vim pelo site e tenho interesse em um EVENTO da Nutrensinando.",
-      outro: "Oi! Vim pelo site da Nutrensinando e queria falar sobre outro assunto."
-    };
-    $$("[data-whats]").forEach((a) => { a.href = linkWhats(msgsFale[a.dataset.whats] || msgsFale.outro); });
+    $("#rod-robo").href = linkRobo();
+    // Seção "Fale conosco": cada botão abre o robô já no assunto certo
+    $$("[data-robo]").forEach((a) => { a.href = linkRobo(a.dataset.robo); });
     $("#rod-insta").href = `https://instagram.com/${insta}`;
     $("#rod-insta-txt").textContent = "@" + insta;
     // Contatos ainda não preenchidos ficam escondidos
@@ -282,7 +275,7 @@ const PAGINAS_GOOGLE_SITES = {
   }
 
   /* ---------- Cursos ---------- */
-  // Cada cartão leva direto para a Hotmart (ou para o WhatsApp, se o curso estiver em breve/esgotado)
+  // Cada cartão leva direto para a Hotmart (ou para o robô do Telegram, se o curso estiver em breve/esgotado)
   let desenharCursos = () => {};
   if ($("#grade-cursos")) {
     let CURSOS = [];
@@ -316,11 +309,8 @@ const PAGINAS_GOOGLE_SITES = {
         return `<a class="${classe}" href="${href}" target="_blank" rel="noopener" data-principal>Quero este curso <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(c.titulo)} (abre a Hotmart em nova aba)</span></a>
           <small class="curso__nota">Você vai direto para a página do curso na Hotmart.</small>`;
       }
-      const msgW = status === "em_breve"
-        ? `Oi, pessoal! Quero ser avisada quando o curso "${c.titulo}" abrir.`
-        : `Oi, pessoal! O curso "${c.titulo}" está esgotado. Pode me avisar da próxima turma?`;
       const rot = status === "em_breve" ? "Me avise quando abrir" : "Avise-me da próxima turma";
-      return `<a class="${classe.replace("botao--principal", "botao--roxo")}" href="${linkWhats(msgW)}" target="_blank" rel="noopener" data-principal><svg class="ic" aria-hidden="true"><use href="#ic-whats"/></svg> ${rot}<span class="sr-only">: ${esc(c.titulo)} (abre o WhatsApp)</span></a>`;
+      return `<a class="${classe.replace("botao--principal", "botao--roxo")}" href="${linkRobo("falar")}" target="_blank" rel="noopener" data-principal><svg class="ic" aria-hidden="true"><use href="#ic-telegram"/></svg> ${rot}<span class="sr-only">: ${esc(c.titulo)} (abre o atendimento no Telegram)</span></a>`;
     }
 
     function cartao(c, n) {
@@ -651,8 +641,8 @@ const PAGINAS_GOOGLE_SITES = {
         const nome = chave(col(l, "informacao", "campo"));
         const valor = col(l, "valor", "resposta");
         if (!valor) return;
-        if (nome.includes("whats") && nome.includes("atend")) return; // número das nutricionistas: só o robô usa
-        if (nome.includes("whats")) dados.whatsapp = valor;
+        if (nome.includes("whats")) return; // "WhatsApp atendimento" (número das nutricionistas): só o robô usa
+        if (nome.includes("telegram")) dados.telegram = valor;
         else if (nome.includes("mail")) dados.email = valor;
         else if (nome.includes("insta")) dados.instagram = valor;
         else if (nome.includes("alun")) dados.areaAlunos = valor;

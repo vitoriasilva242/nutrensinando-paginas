@@ -906,5 +906,5 @@ fieldset.campo { border: 0; padding: 0; margin: 0 0 18px; }
 .fale__opcao b { display: block; font-size: 1.02rem; line-height: 1.25; }
 .fale__opcao small { display: block; color: #dccbe3; font-size: .86rem; margin-top: 2px; }
 .fale__opcao > span:nth-child(2) { flex: 1; }
-.fale__whats { flex: none; width: 26px; height: 26px; color: var(--verde); }
+.fale__app { flex: none; width: 26px; height: 26px; color: var(--verde); }
 .fale__nota { text-align: center; margin: 26px 0 0; font-size: .92rem; color: #dccbe3; }
