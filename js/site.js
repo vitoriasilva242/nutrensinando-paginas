@@ -272,7 +272,7 @@ const PAGINAS_GOOGLE_SITES = {
               ${ev.vagas ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-pessoas"/></svg>${esc(ev.vagas)}</span>` : ""}
             </div>
             <p>${esc(ev.descricao)}</p>
-            ${ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo ${esc(plataforma)}</p>` : ""}
+            ${/^gratuit/i.test(ev.preco || "") ? `<p class="evento__preco"><b>Gratuito</b> · inscrição pelo ${esc(plataforma)}</p>` : ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo ${esc(plataforma)}</p>` : ""}
             <div class="evento__acoes">
               ${inscrever}
               ${pagina ? `<a class="link-evento" href="${esc(pagina)}" target="_blank" rel="noopener">Ver detalhes do evento<span class="sr-only"> (abre em nova aba)</span></a>` : ""}
