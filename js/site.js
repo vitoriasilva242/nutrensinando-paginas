@@ -21,7 +21,7 @@ const LINK_AREA_ALUNOS = "https://consumer.hotmart.com/";
 
 // Usuário do robô de atendimento no Telegram, sem o @ (o site abre t.me/USUARIO).
 // Também dá para trocar pela planilha: aba Contatos, linha "Telegram".
-const TELEGRAM = "nutrensinando_teste_bot";
+const TELEGRAM = "nutrensinando_bot";
 
 // Usuário do Instagram, sem o @
 const INSTAGRAM = "nutrensinando_";
