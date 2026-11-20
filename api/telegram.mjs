@@ -14,7 +14,7 @@
    ========================================================= */
 
 import crypto from "node:crypto";
-import { executarCom } from "./_robo.mjs";
+import { executarCom, registrarNoCRM } from "./_robo.mjs";
 
 const TOKEN = () => process.env.TELEGRAM_BOT_TOKEN || "";
 const API = (metodo) => `https://api.telegram.org/bot${TOKEN()}/${metodo}`;
@@ -37,7 +37,19 @@ function html(t) {
 }
 
 async function mandar(chat, c) {
-  if (c.type === "text") return chamar("sendMessage", { chat_id: chat, text: html(c.text.body), parse_mode: "HTML", disable_web_page_preview: true });
+  if (c.type === "text") {
+    return chamar("sendMessage", {
+      chat_id: chat, text: html(c.text.body), parse_mode: "HTML", disable_web_page_preview: true,
+      ...(c.tirarTeclado ? { reply_markup: { remove_keyboard: true } } : {})
+    });
+  }
+  // Botão nativo do Telegram que manda o número da pessoa (ela que toca, então é consentimento)
+  if (c.type === "pedir_contato") {
+    return chamar("sendMessage", {
+      chat_id: chat, text: html(c.body), parse_mode: "HTML", disable_web_page_preview: true,
+      reply_markup: { keyboard: [[{ text: c.sim, request_contact: true }], [{ text: c.nao }]], resize_keyboard: true, one_time_keyboard: true }
+    });
+  }
   const i = c.interactive;
   if (i.type === "button") {
     return chamar("sendMessage", {
@@ -79,6 +91,19 @@ export async function POST(request) {
     chamar("answerCallbackQuery", { callback_query_id: q.id }); // tira o "carregando" do botão
     chat = q.message?.chat?.id; quem = q.from;
     msg = { from: String(chat), id: "tg" + u.update_id, type: "interactive", interactive: { button_reply: { id: q.data } } };
+  } else if (u.message?.contact) {
+    // A pessoa tocou em "Compartilhar meu número": grava no CRM e segue para a equipe
+    chat = u.message.chat.id; quem = u.message.from;
+    const ct = u.message.contact;
+    if (ct.user_id && ct.user_id === quem?.id) {
+      await registrarNoCRM({
+        para: String(chat),
+        nome: [ct.first_name || quem.first_name, ct.last_name || quem.last_name].filter(Boolean).join(" "),
+        telefone: ct.phone_number,
+        usuario: quem.username || ""
+      });
+    }
+    msg = { from: String(chat), id: "tg" + u.update_id, type: "interactive", interactive: { button_reply: { id: "contato_ok" } } };
   } else if (u.message?.text) {
     chat = u.message.chat.id; quem = u.message.from;
     // Primeira conversa começa com /start. O link do site pode mandar o assunto: t.me/ROBO?start=curso
@@ -90,7 +115,7 @@ export async function POST(request) {
   }
 
   try {
-    const respostas = await executarCom(msg, { profile: { name: quem?.first_name || "" } });
+    const respostas = await executarCom(msg, { profile: { name: quem?.first_name || "" }, podePedirContato: true });
     for (const c of respostas) await mandar(chat, c);
   } catch (e) { console.error("Erro no robô (Telegram):", e); }
   return new Response("ok");

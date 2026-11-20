@@ -13,6 +13,10 @@
      das nutricionistas com a mensagem pronta. Se não tiver, avisa que
      elas vão responder ali mesmo e fica quieto naquela conversa por 24h.
 
+   CRM: se a variável CRM_SEGREDO estiver na Vercel, antes de passar para a
+   equipe o robô pede o número da pessoa (botão do Telegram) e grava o contato
+   no CRM Nutrensinando (abas Contatos e Interações). Sem a variável, segue direto.
+
    Opcional (memória entre conversas, ex.: Upstash Redis pela Vercel):
      KV_REST_API_URL / KV_REST_API_TOKEN  (ou UPSTASH_REDIS_REST_URL / _TOKEN)
    O "_" no nome do arquivo faz a Vercel não tratar este arquivo como endereço.
@@ -21,6 +25,10 @@
 const PLANILHA_ID = process.env.PLANILHA_ID || "1OqUwWHoEyYROP3I-rKOwKYHMKhbaETscsKEUBEFKhRg";
 const LINK_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwzXeHtvWtOHwimcLcGROb01U5CBNf_43F1xW4LimZZQtqHMT8RqKLe6tlHMCPiakk6Yw/exec";
 const PAUSA_SEGUNDOS = 24 * 60 * 60;
+// CRM Nutrensinando (Apps Script, função doPost). A senha fica só na Vercel (CRM_SEGREDO).
+const CRM_URL = process.env.CRM_URL || "https://script.google.com/macros/s/AKfycbwb5JJiVypvAGMoNGGO2jvqIuIXXG3ZS3eRfErJ661byCRDwSI-CYIg7kubn-MWOYFafg/exec";
+const CRM_SEGREDO = process.env.CRM_SEGREDO || "";
+export const crmLigado = () => !!(CRM_URL && CRM_SEGREDO);
 
 // Textos padrão. {nome} vira o primeiro nome da pessoa.
 const TEXTOS_PADRAO = {
@@ -32,7 +40,10 @@ const TEXTOS_PADRAO = {
   depois_da_lista: "Ficou com alguma dúvida? Posso te passar para a Luana ou a Taiane.",
   falar_equipe: "Claro! Toque no botão abaixo para falar direto com a Luana e a Taiane. A mensagem já vai pronta. 😊",
   falar_equipe_aqui: "Perfeito! Já avisei a Luana e a Taiane, e uma delas vai te responder por aqui assim que possível. 😊\n\nSe quiser voltar ao menu, é só escrever *menu*.",
-  nao_entendi: "Não entendi muito bem 😅 Escolha uma das opções:"
+  nao_entendi: "Não entendi muito bem 😅 Escolha uma das opções:",
+  pedir_contato: "Para a Luana e a Taiane conseguirem te responder, toque em *Compartilhar meu número* aqui embaixo. 📱\n\n_Seu nome e telefone ficam guardados só com a equipe da Nutrensinando, para esse atendimento. Política de privacidade: https://nutrensinando-paginas.vercel.app/politica-privacidade.html_",
+  contato_salvo: "Anotado, obrigada! 💜",
+  contato_recusado: "Sem problemas! 😊"
 };
 
 /* ---------------- Planilha ---------------- */
@@ -154,7 +165,45 @@ async function existe(k) {
   const v = memoria.get(k);
   return !!v && v > Date.now();
 }
-async function apagar(k) { await kv("DEL", k); memoria.delete(k); }
+async function apagar(k) { await kv("DEL", k); memoria.delete(k); memoriaValor.delete(k); }
+
+// Guarda um texto curto (ex.: o assunto que a pessoa estava vendo)
+const memoriaValor = new Map();
+async function guardarValor(k, valor, segundos) {
+  const r = await kv("SET", k, String(valor), "EX", String(segundos));
+  if (r === undefined) memoriaValor.set(k, { valor: String(valor), ate: Date.now() + segundos * 1000 });
+}
+async function lerValor(k) {
+  const r = await kv("GET", k);
+  if (r !== undefined) return r || "";
+  const v = memoriaValor.get(k);
+  return v && v.ate > Date.now() ? v.valor : "";
+}
+
+/* ---------------- CRM ---------------- */
+
+// Grava no CRM quem pediu atendimento. Nunca derruba a conversa se o CRM falhar.
+export async function registrarNoCRM({ para, nome, telefone, usuario }) {
+  if (!crmLigado()) return { ok: false, erro: "CRM desligado" };
+  const assunto = await lerValor(`assunto:${para}`);
+  try {
+    const r = await fetch(CRM_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        segredo: CRM_SEGREDO, tipo: "pedido_atendimento", origem: "Telegram",
+        nome, telefone, usuario, interesse: assunto === "cursos" ? "os cursos" : assunto === "eventos" ? "os eventos" : ""
+      }),
+      redirect: "follow"
+    });
+    const j = await r.json().catch(() => ({ ok: false, erro: "resposta inválida (" + r.status + ")" }));
+    if (!j.ok) console.error("CRM:", j.erro);
+    return j;
+  } catch (e) {
+    console.error("CRM:", e);
+    return { ok: false, erro: String(e) };
+  }
+}
 
 /* ---------------- Envio ---------------- */
 
@@ -184,6 +233,8 @@ const botaoLink = (para, body, titulo, url) => enviar({
   interactive: { type: "cta_url", body: { text: corta(body, 1024) }, action: { name: "cta_url", parameters: { display_text: corta(titulo, 20), url } } }
 });
 
+const pedirContato = (para, body, sim, nao) => enviar({ to: para, type: "pedir_contato", body: corta(body, 4096), sim, nao });
+
 const MENU = [["cursos", "Cursos"], ["eventos", "Eventos"], ["equipe", "Falar com a equipe"]];
 const preenche = (t, ctx) => t.replace(/\{nome\}/g, ctx.nome || "").replace(/,\s*!/, "!").replace(/Oi\s+!/, "Oi!");
 
@@ -204,6 +255,7 @@ const dataBR = (iso) => {
 /* ---------------- Conversa ---------------- */
 
 async function mostrarCursos(para, d, ctx) {
+  await guardarValor(`assunto:${para}`, "cursos", PAUSA_SEGUNDOS);
   const lista = d.cursos.filter((c) => c.status !== "esgotado");
   if (!lista.length) return botoes(para, preenche(d.textos.sem_cursos, ctx), [["equipe", "Falar com a equipe"], ["menu", "Voltar ao menu"]]);
   ctx.interesse = "os cursos";
@@ -215,6 +267,7 @@ async function mostrarCursos(para, d, ctx) {
 }
 
 async function mostrarEventos(para, d, ctx) {
+  await guardarValor(`assunto:${para}`, "eventos", PAUSA_SEGUNDOS);
   if (!d.eventos.length) return botoes(para, preenche(d.textos.sem_eventos, ctx), [["equipe", "Falar com a equipe"], ["menu", "Voltar ao menu"]]);
   ctx.interesse = "os eventos";
   const itens = d.eventos.map((e) => {
@@ -226,6 +279,12 @@ async function mostrarEventos(para, d, ctx) {
 }
 
 async function falarComEquipe(para, d, ctx, assunto) {
+  if (assunto) await guardarValor(`assunto:${para}`, assunto, PAUSA_SEGUNDOS);
+  else assunto = await lerValor(`assunto:${para}`);
+  // Antes de passar para a equipe, pede o número (só onde a plataforma permite e o CRM está ligado)
+  if (ctx.podePedirContato && !ctx.contatoRespondido && crmLigado()) {
+    return pedirContato(para, preenche(d.textos.pedir_contato, ctx), "📱 Compartilhar meu número", "Agora não");
+  }
   const numero = String(d.atendimento).replace(/\D/g, "");
   if (numero) {
     const n = numero.length === 10 || numero.length === 11 ? "55" + numero : numero;
@@ -243,7 +302,7 @@ const QUER_EQUIPE = /\b(falar|atendente|atendimento|humano|pessoa|luana|taiane|n
 
 export async function responder(msg, contato = {}) {
   const para = msg.from;
-  const ctx = { nome: String(contato?.profile?.name || "").trim().split(/\s+/)[0] || "" };
+  const ctx = { nome: String(contato?.profile?.name || "").trim().split(/\s+/)[0] || "", podePedirContato: !!contato?.podePedirContato };
 
   // Meta às vezes manda a mesma mensagem duas vezes: responde só uma
   if (msg.id && !(await guardar(`msg:${msg.id}`, 3 * 24 * 3600, true))) return "repetida";
@@ -256,6 +315,14 @@ export async function responder(msg, contato = {}) {
   // Números digitados (modo texto, ex.: teste pelo Twilio): 1 cursos, 2 eventos, 3 equipe, 0 menu
   const NUMEROS = { "1": "cursos", "2": "eventos", "3": "equipe" };
   if (NUMEROS[escrito]) escolha = NUMEROS[escrito];
+
+  // Resposta ao pedido de número: o Telegram manda "contato_ok"; "Agora não" chega como texto
+  if (escolha === "contato_ok" || escrito === "agora nao") {
+    const d = await carregarDados();
+    await enviar({ to: para, type: "text", text: { body: preenche(escolha === "contato_ok" ? d.textos.contato_salvo : d.textos.contato_recusado, ctx) }, tirarTeclado: true });
+    await falarComEquipe(para, d, { ...ctx, contatoRespondido: true }, "");
+    return "equipe";
+  }
 
   if (QUER_MENU.test(escrito)) { await apagar(`pausa:${para}`); escolha = "menu"; }
   if (!escolha && (await existe(`pausa:${para}`))) return "pausado";
