@@ -1,15 +1,20 @@
 /* =========================================================
    CONFIGURAÇÕES DO SITE · Nutrensinando
    ---------------------------------------------------------
-   O jeito mais fácil de mudar contatos, eventos e cursos é pela
-   PLANILHA do Google (veja PLANILHA_ID abaixo): o site lê a planilha
-   sozinho sempre que alguém abre a página.
-   Os valores deste arquivo só são usados se a planilha não carregar.
+   EVENTOS E CURSOS vêm do CRM Nutrensinando (painel → 📚 Produtos):
+   todo produto com "Mostrar no site" marcado aparece aqui sozinho.
+   Contatos (Telegram, Instagram, e-mail, horários) vêm da PLANILHA do
+   Google (veja PLANILHA_ID abaixo). Enquanto nenhum evento/curso estiver
+   marcado no CRM, valem os da planilha; e se nada carregar, os deste arquivo.
    ========================================================= */
 
 // Código da planilha do Google que alimenta o site. É o trecho do link da planilha
 // entre "/d/" e "/edit". A planilha precisa estar como "Qualquer pessoa com o link: Leitor".
 const PLANILHA_ID = "1OqUwWHoEyYROP3I-rKOwKYHMKhbaETscsKEUBEFKhRg";
+
+// Endereço do CRM (App da Web do Apps Script) + "?api=site". Só devolve os produtos
+// marcados "Mostrar no site" (nenhum dado de pessoas). Deixe "" para desligar.
+const LINK_CRM = "https://script.google.com/macros/s/AKfycbwb5JJiVypvAGMoNGGO2jvqIuIXXG3ZS3eRfErJ661byCRDwSI-CYIg7kubn-MWOYFafg/exec?api=site";
 
 // Endereço do sistema de eventos (Google Apps Script). Cada evento tem uma página
 // própria nele: este endereço + "?evento=" + o apelido (slug) do evento.
@@ -249,8 +254,11 @@ const PAGINAS_GOOGLE_SITES = {
     $("#lista-eventos").innerHTML = proximos.map((ev, i) => {
       const [a, m, d] = String(ev.data).split("-").map(Number);
       const pagina = ev.slug ? `${LINK_APPS_SCRIPT}?evento=${encodeURIComponent(ev.slug)}` : "";
-      const inscrever = preenchido(ev.link_sympla)
-        ? `<a class="botao botao--principal botao--pequeno" href="${esc(ev.link_sympla)}" target="_blank" rel="noopener">Quero me inscrever <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(ev.titulo)} (abre o Sympla em nova aba)</span></a>`
+      const plataforma = preenchido(ev.plataforma) ? ev.plataforma : "Sympla";
+      const inscrever = ev.status === "esgotado"
+        ? `<a class="botao botao--roxo botao--pequeno" href="${linkRobo("falar")}" target="_blank" rel="noopener">Vagas esgotadas · avise-me da próxima<span class="sr-only"> (abre o atendimento no Telegram)</span></a>`
+        : preenchido(ev.link_sympla)
+        ? `<a class="botao botao--principal botao--pequeno" href="${esc(ev.link_sympla)}" target="_blank" rel="noopener">Quero me inscrever <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(ev.titulo)} (abre o ${esc(plataforma)} em nova aba)</span></a>`
         : `<span class="botao botao--principal botao--pequeno" aria-disabled="true">Inscrições em breve</span>`;
       return `
         <article class="evento" style="--i:${i}">
@@ -264,7 +272,7 @@ const PAGINAS_GOOGLE_SITES = {
               ${ev.vagas ? `<span><svg class="ic" aria-hidden="true"><use href="#ic-pessoas"/></svg>${esc(ev.vagas)}</span>` : ""}
             </div>
             <p>${esc(ev.descricao)}</p>
-            ${ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo Sympla</p>` : ""}
+            ${ev.preco ? `<p class="evento__preco">A partir de <b>${esc(ev.preco)}</b> · pagamento seguro pelo ${esc(plataforma)}</p>` : ""}
             <div class="evento__acoes">
               ${inscrever}
               ${pagina ? `<a class="link-evento" href="${esc(pagina)}" target="_blank" rel="noopener">Ver detalhes do evento<span class="sr-only"> (abre em nova aba)</span></a>` : ""}
@@ -303,11 +311,11 @@ const PAGINAS_GOOGLE_SITES = {
       if (status === "disponivel") {
         // Enquanto o link da Hotmart não for preenchido, o botão aparece desativado
         if (!preenchido(c.link_compra)) {
-          return `<span class="${classe}" aria-disabled="true">Link da Hotmart em breve</span>`;
+          return `<span class="${classe}" aria-disabled="true">Link de compra em breve</span>`;
         }
         const href = esc(c.link_compra);
-        return `<a class="${classe}" href="${href}" target="_blank" rel="noopener" data-principal>Quero este curso <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(c.titulo)} (abre a Hotmart em nova aba)</span></a>
-          <small class="curso__nota">Você vai direto para a página do curso na Hotmart.</small>`;
+        return `<a class="${classe}" href="${href}" target="_blank" rel="noopener" data-principal>Quero este curso <span class="seta" aria-hidden="true">→</span><span class="sr-only">: ${esc(c.titulo)} (abre a página de compra em nova aba)</span></a>
+          <small class="curso__nota">Você vai direto para a página do curso na ${esc(preenchido(c.plataforma) ? c.plataforma : "Hotmart")}.</small>`;
       }
       const rot = status === "em_breve" ? "Me avise quando abrir" : "Avise-me da próxima turma";
       return `<a class="${classe.replace("botao--principal", "botao--roxo")}" href="${linkRobo("falar")}" target="_blank" rel="noopener" data-principal><svg class="ic" aria-hidden="true"><use href="#ic-telegram"/></svg> ${rot}<span class="sr-only">: ${esc(c.titulo)} (abre o atendimento no Telegram)</span></a>`;
@@ -630,6 +638,31 @@ const PAGINAS_GOOGLE_SITES = {
       .map((l) => Object.fromEntries(nomes.map((n, i) => [n, l[i] || ""])));
   }
 
+  // Eventos e cursos do CRM (painel → Produtos → "Mostrar no site")
+  async function carregarCRM() {
+    if (!preenchido(LINK_CRM)) return null;
+    const ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    const tempo = ctrl && setTimeout(() => ctrl.abort(), 7000);
+    try {
+      const resp = await fetch(LINK_CRM, { cache: "no-store", signal: ctrl ? ctrl.signal : undefined });
+      const j = await resp.json();
+      return j && j.ok ? j : null;
+    } finally {
+      if (tempo) clearTimeout(tempo);
+    }
+  }
+  function usarCRM(crm) {
+    if (!crm) return;
+    if ((crm.eventos || []).length) {
+      dados.eventos = crm.eventos.map((e) => ({
+        titulo: e.titulo, data: e.data, horario: e.horario, formato: e.formato, local: e.local,
+        descricao: e.descricao, preco: e.preco, vagas: e.vagas, plataforma: e.plataforma,
+        link_sympla: e.link_inscricao, status: e.status, slug: ""
+      }));
+    }
+    if ((crm.cursos || []).length) dados.cursos = crm.cursos;
+  }
+
   async function carregarPlanilha() {
     if (!preenchido(PLANILHA_ID)) return;
     const [contatos, eventos, cursos] = await Promise.all(["Contatos", "Eventos", "Cursos"].map((a) => baixarAba(a).catch(() => null)));
@@ -692,9 +725,12 @@ const PAGINAS_GOOGLE_SITES = {
   /* ---------- Início ---------- */
   lerEndereco();
   atualizarRolagem();
-  // Espera a planilha (até 4 segundos); se ela não responder, usa o que está neste arquivo
-  const limite = new Promise((ok) => setTimeout(ok, 4000));
-  Promise.race([carregarPlanilha().catch(() => {}), limite]).then(() => {
+  // Espera a planilha e o CRM (até 6 segundos); o CRM vale mais que a planilha,
+  // e se nada responder, usa o que está neste arquivo
+  const limite = new Promise((ok) => setTimeout(ok, 6000));
+  const tudo = Promise.all([carregarPlanilha().catch(() => {}), carregarCRM().catch(() => null)])
+    .then(([, crm]) => usarCRM(crm));
+  Promise.race([tudo, limite]).then(() => {
     desenharTudo();
     atualizarRolagem();
   });

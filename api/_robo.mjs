@@ -5,7 +5,9 @@
 
      Menu → [Cursos] [Eventos] [Falar com a equipe]
 
-   - Cursos e eventos vêm da MESMA planilha do site (abas Cursos e Eventos).
+   - Cursos e eventos vêm do CRM (painel → Produtos → "Mostrar no site"),
+     igual ao site. Enquanto nada estiver marcado lá, valem as abas Cursos
+     e Eventos da planilha do site.
    - Os textos podem ser trocados na aba "Robô" da planilha
      (colunas: Mensagem | Texto). Se a aba não existir, valem os textos abaixo.
    - "Falar com a equipe": se a aba Contatos tiver a linha
@@ -86,12 +88,26 @@ const col = (linha, ...nomes) => {
 };
 const aparece = (l) => !/^n/i.test(col(l, "mostrar"));
 
+// Produtos marcados "Mostrar no site" no CRM (mesmo endereço que o site usa)
+async function produtosDoCRM() {
+  if (!CRM_URL) return null;
+  try {
+    const r = await fetch(`${CRM_URL}?api=site`, { redirect: "follow", signal: AbortSignal.timeout(8000) });
+    const j = await r.json();
+    return j && j.ok ? j : null;
+  } catch (e) {
+    console.error("CRM (produtos):", e);
+    return null;
+  }
+}
+
 let cache = { em: 0, dados: null };
 export async function carregarDados() {
   if (cache.dados && Date.now() - cache.em < 60_000) return cache.dados;
-  const [contatos, eventos, cursos, robo] = await Promise.all(
-    ["Contatos", "Eventos", "Cursos", "Robô"].map((a) => baixarAba(a).catch(() => null))
-  );
+  const [[contatos, eventos, cursos, robo], crm] = await Promise.all([
+    Promise.all(["Contatos", "Eventos", "Cursos", "Robô"].map((a) => baixarAba(a).catch(() => null))),
+    produtosDoCRM()
+  ]);
   const dados = { textos: { ...TEXTOS_PADRAO }, atendimento: "", instagram: "", cursos: [], eventos: [] };
 
   (contatos || []).forEach((l) => {
@@ -135,6 +151,19 @@ export async function carregarDados() {
     };
   }).filter((e) => !/^\d{4}-\d{2}-\d{2}$/.test(e.data) || e.data >= hoje)
     .sort((a, b) => a.data.localeCompare(b.data));
+
+  // O CRM vale mais que a planilha (quando tem algo marcado para o site)
+  if (crm?.cursos?.length) {
+    dados.cursos = crm.cursos.map((c) => ({
+      titulo: c.titulo, subtitulo: c.subtitulo, preco: c.preco_a_partir, link: c.link_compra, status: c.status
+    }));
+  }
+  if (crm?.eventos?.length) {
+    dados.eventos = crm.eventos.filter((e) => e.status !== "esgotado").map((e) => ({
+      titulo: e.titulo, data: e.data, horario: e.horario, formato: e.formato, local: e.local,
+      preco: e.preco, link: e.link_inscricao
+    }));
+  }
 
   cache = { em: Date.now(), dados };
   return dados;
@@ -185,6 +214,18 @@ async function lerValor(k) {
 /* ---------------- CRM ---------------- */
 
 // Grava no CRM quem pediu atendimento. Nunca derruba a conversa se o CRM falhar.
+// Manda algo para o doPost do CRM (com a senha). Usado pelo robô e pelo webhook da Hotmart.
+export async function postarNoCRM(corpo) {
+  if (!crmLigado()) return { ok: false, erro: "CRM desligado (falta CRM_SEGREDO na Vercel)" };
+  const r = await fetch(CRM_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ segredo: CRM_SEGREDO, ...corpo }),
+    redirect: "follow"
+  });
+  return r.json().catch(() => ({ ok: false, erro: "resposta inválida (" + r.status + ")" }));
+}
+
 export async function registrarNoCRM({ para, nome, telefone, usuario }) {
   if (!crmLigado()) return { ok: false, erro: "CRM desligado" };
   const assunto = await lerValor(`assunto:${para}`);
