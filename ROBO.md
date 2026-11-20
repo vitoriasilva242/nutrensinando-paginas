@@ -16,13 +16,13 @@
 
 1. No Telegram, fale com **@BotFather** → `/newbot` → escolha o nome e o usuário (terminando em `bot`). Guarde o **token**.
 2. Vercel → projeto → **Settings → Environment Variables** → crie `TELEGRAM_BOT_TOKEN` com o token. Depois faça um **Redeploy**.
-3. Abra `https://nutrensinando-paginas.vercel.app/api/telegram?configurar=1`. Deve aparecer "Pronto!".
+3. Abra `https://nutrensinando-paginas.vercel.app/api/telegram?configurar=1`. Deve aparecer "Pronto!". Isso também coloca o nome, a descrição e o menu de comandos do robô (a foto se troca no @BotFather: `/setuserpic`).
 4. No Telegram, procure o robô pelo usuário e toque em **Começar**.
 
 ## Planilha
 
-- Aba **Contatos**, linha **WhatsApp atendimento**: número da Luana e da Taiane. O botão "Falar com a equipe" abre esse WhatsApp. Se a linha não existir, o robô diz que elas respondem ali mesmo e fica quieto na conversa por 24 horas.
-- Aba **Robô** (opcional), colunas **Mensagem | Texto**, para trocar os textos. `{nome}` vira o primeiro nome da pessoa. As mensagens que dá para trocar são: `boas_vindas`, `cursos_intro`, `sem_cursos`, `eventos_intro`, `sem_eventos`, `depois_da_lista`, `falar_equipe`, `falar_equipe_aqui` e `nao_entendi`.
+- Aba **Contatos**, linha **WhatsApp atendimento**: número da Luana e da Taiane, com DDD. O botão "Falar com a equipe" abre esse WhatsApp com a mensagem pronta. Se a linha estiver vazia, quem compartilhou o número recebe "a equipe vai te chamar no WhatsApp" (o contato está no CRM), e quem não compartilhou recebe o Instagram (linha **Instagram**).
+- Aba **Robô** (opcional), colunas **Mensagem | Texto**, para trocar os textos. `{nome}` vira o primeiro nome da pessoa. As mensagens que dá para trocar são: `boas_vindas`, `cursos_intro`, `sem_cursos`, `eventos_intro`, `sem_eventos`, `depois_da_lista`, `falar_equipe`, `falar_equipe_aqui`, `falar_equipe_instagram`, `pedir_contato`, `contato_salvo`, `contato_recusado` e `nao_entendi`.
 
 ## Ligação com o CRM
 

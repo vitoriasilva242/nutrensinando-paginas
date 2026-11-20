@@ -71,6 +71,16 @@ export async function GET(request) {
   if (url.searchParams.get("configurar")) {
     const destino = `${url.origin}/api/telegram`;
     const r = await chamar("setWebhook", { url: destino, secret_token: SEGREDO(), allowed_updates: ["message", "callback_query"], drop_pending_updates: true });
+    // Perfil do robô: nome, textos da tela inicial e menu de comandos
+    await chamar("setMyName", { name: "Nutrensinando" });
+    await chamar("setMyShortDescription", { short_description: "Cursos e eventos de Nutrição com a Luana e a Taiane. 💜" });
+    await chamar("setMyDescription", { description: "Oi! Aqui é o atendimento da Nutrensinando: cursos e atualização em Nutrição, com base científica e prática, para estudantes e nutricionistas.\n\nToque em Começar para ver os cursos, os próximos eventos ou falar com a equipe." });
+    await chamar("setMyCommands", { commands: [
+      { command: "start", description: "Começar / voltar ao menu" },
+      { command: "cursos", description: "Ver os cursos" },
+      { command: "eventos", description: "Ver os próximos eventos" },
+      { command: "equipe", description: "Falar com a Luana e a Taiane" }
+    ] });
     const eu = await chamar("getMe", {});
     return new Response(r.ok
       ? `Pronto! O robô @${eu.result?.username} agora recebe as mensagens em ${destino}. Abra o Telegram e mande "oi" para ele.`
@@ -108,7 +118,8 @@ export async function POST(request) {
     chat = u.message.chat.id; quem = u.message.from;
     // Primeira conversa começa com /start. O link do site pode mandar o assunto: t.me/ROBO?start=curso
     const inicio = u.message.text.match(/^\/start(?:\s+(\S+))?/);
-    const texto = inicio ? (inicio[1] || "oi") : u.message.text;
+    const comando = u.message.text.match(/^\/(cursos|eventos|equipe|menu)\b/);
+    const texto = inicio ? (inicio[1] || "oi") : comando ? (comando[1] === "equipe" ? "falar" : comando[1]) : u.message.text;
     msg = { from: String(chat), id: "tg" + u.update_id, type: "text", text: { body: texto } };
   } else {
     return new Response("ok");

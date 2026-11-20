@@ -39,7 +39,8 @@ const TEXTOS_PADRAO = {
   sem_eventos: "Ainda não temos eventos com data marcada. Quer falar com a equipe para saber das próximas datas?",
   depois_da_lista: "Ficou com alguma dúvida? Posso te passar para a Luana ou a Taiane.",
   falar_equipe: "Claro! Toque no botão abaixo para falar direto com a Luana e a Taiane. A mensagem já vai pronta. 😊",
-  falar_equipe_aqui: "Perfeito! Já avisei a Luana e a Taiane, e uma delas vai te responder por aqui assim que possível. 😊\n\nSe quiser voltar ao menu, é só escrever *menu*.",
+  falar_equipe_aqui: "Prontinho! A Luana ou a Taiane vai te chamar no WhatsApp assim que possível. 😊\n\nSe quiser voltar ao menu, é só escrever *menu*.",
+  falar_equipe_instagram: "Você também pode falar com a Luana e a Taiane pelo Instagram. 😊",
   nao_entendi: "Não entendi muito bem 😅 Escolha uma das opções:",
   pedir_contato: "Para a Luana e a Taiane conseguirem te responder, toque em *Compartilhar meu número* aqui embaixo. 📱\n\n_Seu nome e telefone ficam guardados só com a equipe da Nutrensinando, para esse atendimento. Política de privacidade: https://nutrensinando-paginas.vercel.app/politica-privacidade.html_",
   contato_salvo: "Anotado, obrigada! 💜",
@@ -91,12 +92,13 @@ export async function carregarDados() {
   const [contatos, eventos, cursos, robo] = await Promise.all(
     ["Contatos", "Eventos", "Cursos", "Robô"].map((a) => baixarAba(a).catch(() => null))
   );
-  const dados = { textos: { ...TEXTOS_PADRAO }, atendimento: "", cursos: [], eventos: [] };
+  const dados = { textos: { ...TEXTOS_PADRAO }, atendimento: "", instagram: "", cursos: [], eventos: [] };
 
   (contatos || []).forEach((l) => {
     const nome = chave(col(l, "informacao", "campo"));
     const valor = col(l, "valor", "resposta");
     if (valor && nome.includes("whats") && nome.includes("atend")) dados.atendimento = valor;
+    if (valor && nome === "instagram") dados.instagram = valor.replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//, "").replace(/\/.*$/, "");
   });
 
   // Aba Robô: só vale se tiver as colunas Mensagem e Texto
@@ -292,9 +294,11 @@ async function falarComEquipe(para, d, ctx, assunto) {
     const msg = `Oi, Luana e Taiane! ${ctx.nome ? `Aqui é ${ctx.nome}. ` : ""}Vim pelo atendimento on-line da Nutrensinando e queria falar com vocês${sobre}.`;
     return botaoLink(para, preenche(d.textos.falar_equipe, ctx), "Falar com elas", `https://wa.me/${n}?text=${encodeURIComponent(msg)}`);
   }
-  // Sem número de atendimento: elas respondem nesta mesma conversa; o robô fica quieto
-  await guardar(`pausa:${para}`, PAUSA_SEGUNDOS);
-  return texto(para, preenche(d.textos.falar_equipe_aqui, ctx));
+  // Sem número de atendimento: quem deixou o número é chamada pela equipe (o contato está no CRM);
+  // quem não deixou recebe o Instagram
+  if (ctx.contatoCompartilhado) return texto(para, preenche(d.textos.falar_equipe_aqui, ctx));
+  if (d.instagram) return botaoLink(para, preenche(d.textos.falar_equipe_instagram, ctx), "Abrir Instagram", `https://instagram.com/${d.instagram}`);
+  return botoes(para, preenche(d.textos.nao_entendi, ctx).replace(/^.*?\s(?=Escolha)/, ""), MENU.slice(0, 2));
 }
 
 const QUER_MENU = /^(menu|inicio|início|voltar|robo|robô|0)$/;
@@ -304,7 +308,7 @@ export async function responder(msg, contato = {}) {
   const para = msg.from;
   const ctx = { nome: String(contato?.profile?.name || "").trim().split(/\s+/)[0] || "", podePedirContato: !!contato?.podePedirContato };
 
-  // Meta às vezes manda a mesma mensagem duas vezes: responde só uma
+  // O Telegram pode reenviar a mesma mensagem: responde só uma vez
   if (msg.id && !(await guardar(`msg:${msg.id}`, 3 * 24 * 3600, true))) return "repetida";
 
   let escolha = "";
@@ -312,7 +316,7 @@ export async function responder(msg, contato = {}) {
   else if (msg.type === "button") escolha = chave(msg.button?.payload || msg.button?.text);
   const escrito = msg.type === "text" ? chave(msg.text?.body).replace(/_/g, " ") : "";
 
-  // Números digitados (modo texto, ex.: teste pelo Twilio): 1 cursos, 2 eventos, 3 equipe, 0 menu
+  // Atalhos digitados: 1 cursos, 2 eventos, 3 equipe, 0 menu
   const NUMEROS = { "1": "cursos", "2": "eventos", "3": "equipe" };
   if (NUMEROS[escrito]) escolha = NUMEROS[escrito];
 
@@ -320,7 +324,7 @@ export async function responder(msg, contato = {}) {
   if (escolha === "contato_ok" || escrito === "agora nao") {
     const d = await carregarDados();
     await enviar({ to: para, type: "text", text: { body: preenche(escolha === "contato_ok" ? d.textos.contato_salvo : d.textos.contato_recusado, ctx) }, tirarTeclado: true });
-    await falarComEquipe(para, d, { ...ctx, contatoRespondido: true }, "");
+    await falarComEquipe(para, d, { ...ctx, contatoRespondido: true, contatoCompartilhado: escolha === "contato_ok" }, "");
     return "equipe";
   }
 
