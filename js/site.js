@@ -422,7 +422,7 @@ const PAGINAS_GOOGLE_SITES = {
 
   /* ---------- Efeitos de rolagem ---------- */
   // Títulos: separa as palavras para subirem uma a uma
-  $$("[data-palavras]").forEach((el) => {
+  function separarPalavras(el) {
     let i = 0;
     const percorrer = (no) => {
       Array.from(no.childNodes).forEach((filho) => {
@@ -454,10 +454,11 @@ const PAGINAS_GOOGLE_SITES = {
       });
     };
     percorrer(el);
-  });
+  }
+  $$("[data-palavras]").forEach(separarPalavras);
 
   // Texto que acende: separa as palavras
-  $$("[data-acende]").forEach((el) => {
+  function separarAcende(el) {
     const percorrer = (no) => {
       Array.from(no.childNodes).forEach((filho) => {
         if (filho.nodeType === 3) {
@@ -475,7 +476,43 @@ const PAGINAS_GOOGLE_SITES = {
       });
     };
     percorrer(el);
-  });
+  }
+  $$("[data-acende]").forEach(separarAcende);
+
+  /* ---------- Textos do site (aba "Textos do site" da planilha) ---------- */
+  // Cada elemento com data-t="código" recebe o texto da linha com o mesmo código.
+  // *palavra* = destaque (círculo nos títulos, verde no texto que acende, itálico na frase)
+  // **palavra** = negrito · listas: um item por linha
+  const CIRCULO = '<svg viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M18 44 C14 18 70 6 118 8 C170 10 198 28 192 48 C186 70 118 78 72 74 C30 70 6 58 10 36 C14 22 40 12 66 10"/></svg>';
+  const negrito = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  const comDestaque = (t, abre, fecha) => negrito(t).replace(/\*([^*]+?)\*/g, (_, x) => abre + x + fecha);
+  const linhas = (t) => String(t).split(/\n/).map((x) => x.trim()).filter(Boolean);
+  function aplicarTextos(textos) {
+    if (!textos) return;
+    $$("[data-t]").forEach((el) => {
+      const valor = textos[el.dataset.t];
+      if (valor === undefined) return;
+      const vazio = !String(valor).trim();
+      if (el.hasAttribute("data-t-some")) el.hidden = vazio;
+      if (vazio) return; // vazio = fica o texto original
+      const tipo = el.dataset.tTipo || "";
+      if (tipo === "titulo") el.innerHTML = comDestaque(valor, '<span class="destaque-circulo">', CIRCULO + "</span>");
+      else if (tipo === "frase") el.innerHTML = comDestaque(valor, "<em>", "</em>");
+      else if (tipo === "acende") el.innerHTML = comDestaque(valor, '<span class="verde">', "</span>");
+      else if (tipo === "selo") el.innerHTML = String(valor).split("·").map((x) => esc(x.trim())).filter(Boolean).join(' <span class="ponto" aria-hidden="true"></span> ');
+      else if (tipo === "etiqueta") el.innerHTML = String(valor).split("·").map((x) => esc(x.trim())).join(" <i>·</i> ");
+      else if (tipo === "lista") el.innerHTML = linhas(valor).map((x) => `<li>${negrito(x)}</li>`).join("");
+      else if (tipo === "faixa") { const sp = linhas(valor).map((x) => `<span>${esc(x)}</span>`).join(""); el.innerHTML = sp + sp; }
+      else if (tipo === "comparar") {
+        el.innerHTML = linhas(valor).map((x) => {
+          const [titulo, ...resto] = x.split("|");
+          return `<li><svg class="ic" aria-hidden="true"><use href="#${el.dataset.tIcone}"/></svg><span><strong>${esc(titulo.trim())}</strong><small>${esc(resto.join("|").trim())}</small></span></li>`;
+        }).join("");
+      } else el.innerHTML = linhas(valor).map(negrito).join("<br>");
+      if (el.hasAttribute("data-palavras")) separarPalavras(el);
+      if (el.hasAttribute("data-acende")) separarAcende(el);
+    });
+  }
 
   // Numeração dos itens em sequência
   const numerarSequencias = () => $$("[data-sequencia]").forEach((g) => Array.from(g.children).forEach((c, i) => c.style.setProperty("--i", i)));
@@ -665,7 +702,11 @@ const PAGINAS_GOOGLE_SITES = {
 
   async function carregarPlanilha() {
     if (!preenchido(PLANILHA_ID)) return;
-    const [contatos, eventos, cursos] = await Promise.all(["Contatos", "Eventos", "Cursos"].map((a) => baixarAba(a).catch(() => null)));
+    const [contatos, eventos, cursos, textos] = await Promise.all(["Contatos", "Eventos", "Cursos", "Textos do site"].map((a) => baixarAba(a).catch(() => null)));
+    if (textos) {
+      dados.textos = {};
+      textos.forEach((l) => { const k = col(l, "codigo"); if (k) dados.textos[k] = l[Object.keys(l).find((n) => n === "texto")] || ""; });
+    }
     const aparece = (l) => !/^n/i.test(col(l, "mostrar"));
 
     if (contatos) {
@@ -717,6 +758,7 @@ const PAGINAS_GOOGLE_SITES = {
   }
 
   function desenharTudo() {
+    aplicarTextos(dados.textos);
     desenharContatos();
     desenharEventos();
     desenharCursos();
